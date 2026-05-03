@@ -29,7 +29,7 @@ export default function Login() {
     <div style={{ padding: '48px 24px', maxWidth: 440, margin: '0 auto' }}>
       <div style={{ fontFamily: 'Caveat,cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', marginBottom: 0, lineHeight: 1 }}>lokali</div>
       <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.65, marginBottom: 36 }}>
-        Die Online-Besties ganz in der Nähe finden – spontane Unterhaltungen, ohne Rankingdruck.
+        Find your online besties nearby – spontaneous conversations without ranking pressure. Simply two people who happened to be in the same place at the same time and struck up a conversation.
       </p>
       <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
         {['login','signup'].map(m => (
