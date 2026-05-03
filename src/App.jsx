@@ -11,7 +11,7 @@ import './index.css'
 
 function AppRoutes() {
   const { user, profile, loading } = useAuth()
-  if (loading) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',fontSize:40}}>🐾</div>
+  if (loading) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',fontSize:40}}>🌳</div>
   if (!user) return <Login />
   if (!profile?.username) return <Onboarding />
   return (
