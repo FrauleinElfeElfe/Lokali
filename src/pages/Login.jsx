@@ -21,7 +21,13 @@ export default function Login() {
         const { error } = await signIn(email, password)
         if (error) throw error
       }
-    } catch (e) { setMsg(e.message || 'Ein Fehler ist aufgetreten') }
+    } catch (e) {
+      if (e.message?.includes('rate limit') || e.message?.includes('email rate')) {
+        setMsg('Too many attempts – please try again in an hour.')
+      } else {
+        setMsg(e.message || 'An error occurred. Please try again.')
+      }
+    }
     finally { setLoading(false) }
   }
 
