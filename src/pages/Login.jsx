@@ -23,9 +23,9 @@ export default function Login() {
       }
     } catch (e) {
       if (e.message?.includes('rate limit') || e.message?.includes('email rate')) {
-        setMsg('Too many attempts – please try again in an hour.')
+        setMsg('Leider ist die Testversion von lokali noch relativ schnell überlastet. Bitte probiere es in einer halben Stunde erneut. Vielen Dank für dein Verständnis! 🌳')
       } else {
-        setMsg(e.message || 'An error occurred. Please try again.')
+        setMsg(e.message || 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
       }
     }
     finally { setLoading(false) }
