@@ -27,7 +27,7 @@ export default function Login() {
 
   return (
     <div style={{ padding: '48px 24px', maxWidth: 440, margin: '0 auto' }}>
-      <div style={{ fontFamily: 'Syne,sans-serif', fontSize: 34, fontWeight: 800, color: 'var(--accent)', marginBottom: 8 }}>lokali</div>
+      <div style={{ fontFamily: 'Caveat,cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', marginBottom: 0, lineHeight: 1 }}>lokali</div>
       <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.65, marginBottom: 36 }}>
         Die Online-Besties ganz in der Nähe finden – spontane Unterhaltungen, ohne Rankingdruck.
       </p>
