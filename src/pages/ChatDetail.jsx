@@ -34,8 +34,10 @@ export default function ChatDetail() {
 
   async function send() {
     if (!text.trim()) return
-    await sendMessage(user.id, userId, text.trim())
+    const t = text.trim()
     setText('')
+    await sendMessage(user.id, userId, t)
+    load()
   }
 
   return (
