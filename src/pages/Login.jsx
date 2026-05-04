@@ -10,22 +10,24 @@ export default function Login() {
   const [msg, setMsg] = useState('')
 
   async function handle() {
-    if (!email || !password) { setMsg('Bitte alle Felder ausfüllen'); return }
+    if (!email || !password) { setMsg('Please fill in all fields'); return }
     setLoading(true); setMsg('')
     try {
       if (mode === 'signup') {
         const { error } = await signUp(email, password)
         if (error) throw error
-        setMsg('Bestätigungs-E-Mail gesendet! Bitte checke dein Postfach.')
+        setMsg('Confirmation email sent! Please check your inbox.')
       } else {
         const { error } = await signIn(email, password)
         if (error) throw error
       }
     } catch (e) {
       if (e.message?.includes('rate limit') || e.message?.includes('email rate')) {
-        setMsg('Leider ist die Testversion von lokali noch relativ schnell überlastet. Bitte probiere es in einer halben Stunde erneut. Vielen Dank für dein Verständnis! 🌳')
+        setMsg("You weren't selected as a test user this time – please try again later! 🌳")
+      } else if (e.message?.includes('Invalid login')) {
+        setMsg('Wrong email or password.')
       } else {
-        setMsg(e.message || 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
+        setMsg(e.message || 'An error occurred. Please try again.')
       }
     }
     finally { setLoading(false) }
@@ -33,12 +35,16 @@ export default function Login() {
 
   return (
     <div style={{ padding: '48px 24px', maxWidth: 440, margin: '0 auto' }}>
-      <div style={{ fontFamily: 'Caveat,cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', marginBottom: 0, lineHeight: 1 }}>lokali</div>
-      <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.65, marginBottom: 36 }}>
-        Find your online besties nearby – spontaneous conversations without ranking pressure. Simply two people who happened to be in the same place at the same time and struck up a conversation.
-      </p>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontFamily: 'Caveat, cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>lokali</div>
+        <div style={{ fontSize: 11, color: 'var(--accent)', fontStyle: 'italic', marginTop: 2, marginBottom: 12 }}>from online back to real life 🌳</div>
+        <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.65 }}>
+          Find your online besties nearby – spontaneous conversations without ranking pressure. Simply two people who happened to be in the same place at the same time and struck up a conversation.
+        </p>
+      </div>
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
-        {['login','signup'].map(m => (
+        {['login', 'signup'].map(m => (
           <button key={m} onClick={() => setMode(m)} style={{
             flex: 1, padding: 10, borderRadius: 10, border: '0.5px solid',
             borderColor: mode === m ? 'var(--accent)' : 'var(--border)',
@@ -46,25 +52,26 @@ export default function Login() {
             color: mode === m ? '#fff' : 'var(--text2)',
             fontFamily: 'inherit', fontSize: 14, fontWeight: 500, cursor: 'pointer'
           }}>
-            {m === 'login' ? 'Anmelden' : 'Registrieren'}
+            {m === 'login' ? 'Sign in' : 'Register'}
           </button>
         ))}
       </div>
+
       <div className="form-group">
-        <label className="form-label">E-Mail</label>
-        <input className="form-input" type="email" placeholder="deine@email.de"
+        <label className="form-label">Email</label>
+        <input className="form-input" type="email" placeholder="your@email.com"
           value={email} onChange={e => setEmail(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handle()} />
       </div>
       <div className="form-group">
-        <label className="form-label">Passwort</label>
-        <input className="form-input" type="password" placeholder="min. 6 Zeichen"
+        <label className="form-label">Password</label>
+        <input className="form-input" type="password" placeholder="min. 6 characters"
           value={password} onChange={e => setPassword(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handle()} />
       </div>
-      {msg && <p style={{ fontSize: 13, color: 'var(--accent)', marginBottom: 8 }}>{msg}</p>}
+      {msg && <p style={{ fontSize: 13, color: 'var(--accent)', marginBottom: 8, lineHeight: 1.5 }}>{msg}</p>}
       <button className="btn-primary" onClick={handle} disabled={loading}>
-        {loading ? '...' : mode === 'login' ? 'Anmelden' : 'Konto erstellen'}
+        {loading ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}
       </button>
     </div>
   )
