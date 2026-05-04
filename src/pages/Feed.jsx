@@ -148,16 +148,22 @@ export default function Feed() {
         from online back to real life 🌳
       </div>
 
-      <div className="radius-bar">
-        {RADII.map(r => (
-          <div key={r.km} className={`radius-chip ${radius === r.km ? 'active' : ''}`}
-            onClick={() => {
-              if (locDenied && r.km < 9000) { showToast('Enable location to use distance filters'); return }
-              setRadius(r.km)
-            }}>
-            {r.label}
-          </div>
-        ))}
+      <div style={{ position:'relative', display:'flex', alignItems:'center', borderBottom:'0.5px solid var(--border)' }}>
+        <button onClick={() => document.getElementById('radius-scroll').scrollBy({left:-120,behavior:'smooth'})}
+          style={{ position:'absolute', left:0, zIndex:5, background:'linear-gradient(to right, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>‹</button>
+        <div id="radius-scroll" className="radius-bar" style={{ borderBottom:'none', paddingLeft:32, paddingRight:32 }}>
+          {RADII.map(r => (
+            <div key={r.km} className={`radius-chip ${radius === r.km ? 'active' : ''}`}
+              onClick={() => {
+                if (locDenied && r.km < 9000) { showToast('Enable location to use distance filters'); return }
+                setRadius(r.km)
+              }}>
+              {r.label}
+            </div>
+          ))}
+        </div>
+        <button onClick={() => document.getElementById('radius-scroll').scrollBy({left:120,behavior:'smooth'})}
+          style={{ position:'absolute', right:0, zIndex:5, background:'linear-gradient(to left, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>›</button>
       </div>
 
       <div className="compose-bar">
