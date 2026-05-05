@@ -79,6 +79,18 @@ export default function Feed() {
   const [toast, setToast] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
   const [showEuropeMenu, setShowEuropeMenu] = useState(false)
+  const [reportPost, setReportPost] = useState(null) // { id, username }
+  const [reportReason, setReportReason] = useState('')
+
+  const REPORT_REASONS = [
+    'Hate speech / discrimination',
+    'Harassment or bullying',
+    'NSFW / explicit content',
+    'Spam or scam',
+    'Misinformation',
+    'Underage user',
+    'Other',
+  ]
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
 
@@ -134,7 +146,17 @@ export default function Feed() {
     } catch (e) { console.error(e) }
   }
 
-  function selectDistance(r) {
+  async function submitReport() {
+    if (!reportReason) { showToast('Please select a reason'); return }
+    await supabase.from('reports').insert({
+      post_id: reportPost.id,
+      reporter_id: user.id,
+      reason: reportReason
+    })
+    setReportPost(null)
+    setReportReason('')
+    showToast('Reported – thank you! We will review this. ✓')
+  }
     if (locDenied) { showToast('Enable location to use distance filters'); return }
     setRadius(r.km); setActiveBounds(null); setActiveLabel(r.label)
     setShowEuropeMenu(false)
@@ -276,7 +298,7 @@ export default function Feed() {
                   💬 {openCmts[post.id] ? cmts.length : cntDisplay}
                 </button>
                 {!isOwn && <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>✉ Message</button>}
-                <button className="action-btn report" onClick={() => { reportPost(post.id, user.id); showToast('Reported ✓') }}>⚑ Report</button>
+                <button className="action-btn report" onClick={() => { setReportPost({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>⚑ Report</button>
               </div>
               {openCmts[post.id] && (
                 <div className="comments-wrap">
