@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase, upsertProfile } from '../lib/supabase'
+import { useNavigate } from 'react-router-dom'
 
 const AVATARS = ['🐨','🦊','🐺','🦁','🐸','🦋','🦔','🐧','🦦','🐙','🦜','🐬','🦌','🐼','🦘','🦈','🐻','🦒','🐘','🦏','🐆','🦓','🦅','🦚','🦩','🐊','🐇','🦝','🦫','🐿️','🦉','🦛','🐃','🦬']
-const IDENTITY_OPTIONS = ['LGBTQ+','ADHD','Autism','AuDHD']
+const IDENTITY_OPTIONS = [
+  { group: 'Orientation & Gender', items: ['LGBTQ+'] },
+  { group: 'Neurodivergent', items: ['ADHD', 'Autism', 'AuDHD', 'Dyslexia', 'Dyscalculia'] },
+  { group: 'Mental Health', items: ['Depression', 'Anxiety', 'BPD', 'PTSD / cPTSD', 'Bipolar'] },
+  { group: 'Physical', items: ['Chronic illness', 'Physical disability', 'Hearing impaired', 'Visually impaired'] },
+]
 
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
@@ -14,6 +20,7 @@ function timeAgo(ts) {
 
 export default function Profile() {
   const { user, profile, setProfile, signOut } = useAuth()
+  const navigate = useNavigate()
   const [posts, setPosts] = useState([])
   const [editingAvatar, setEditingAvatar] = useState(false)
   const [editingUsername, setEditingUsername] = useState(false)
@@ -183,15 +190,20 @@ export default function Profile() {
           </div>
           <div className="form-group">
             <label className="form-label">Community</label>
-            <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
-              {IDENTITY_OPTIONS.map(id => (
-                <div key={id} onClick={() => toggleIdentity(id)}
-                  style={{ padding:'8px 14px', borderRadius:20, fontSize:13, fontWeight:500, cursor:'pointer', border:'0.5px solid', borderColor: identities.includes(id) ? 'var(--accent)' : 'var(--border)', background: identities.includes(id) ? 'var(--accent-light)' : 'var(--bg2)', color: identities.includes(id) ? 'var(--accent)' : 'var(--text2)' }}>
-                  {id}
+            {IDENTITY_OPTIONS.map(group => (
+              <div key={group.group} style={{ marginTop: 10 }}>
+                <div style={{ fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>{group.group}</div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                  {group.items.map(id => (
+                    <div key={id} onClick={() => toggleIdentity(id)}
+                      style={{ padding:'7px 12px', borderRadius:20, fontSize:13, fontWeight:500, cursor:'pointer', border:'0.5px solid', borderColor: identities.includes(id) ? 'var(--accent)' : 'var(--border)', background: identities.includes(id) ? 'var(--accent-light)' : 'var(--bg2)', color: identities.includes(id) ? 'var(--accent)' : 'var(--text2)' }}>
+                      {id}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div style={{ marginTop:8, display:'flex', alignItems:'center', gap:8 }}>
+              </div>
+            ))}
+            <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:8 }}>
               <input type="checkbox" checked={visibility.identities} onChange={e => setVisibility(v => ({...v, identities: e.target.checked}))} />
               <span style={{ fontSize:12, color:'var(--text3)' }}>Show on profile</span>
             </div>
@@ -216,6 +228,9 @@ export default function Profile() {
       </div>
 
       <div style={{ padding:'8px 20px 32px' }}>
+        <button onClick={() => navigate('/legal')} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid var(--border)', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'var(--text3)', cursor:'pointer', marginBottom:10 }}>
+          🔒 Privacy Policy & Impressum
+        </button>
         <button onClick={signOut} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid var(--border)', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'var(--text3)', cursor:'pointer' }}>
           Sign out
         </button>

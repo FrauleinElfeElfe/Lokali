@@ -41,7 +41,8 @@ const EUROPE_COUNTRIES = [
 
 const CONTINENTS = [
   { label: '🌎 Americas', bounds: { lat: [-56, 72], lng: [-168, -34] } },
-  { label: '🌏 Asia & Pacific', bounds: { lat: [-50, 77], lng: [26, 180] } },
+  { label: '🌏 Asia', bounds: { lat: [-10, 77], lng: [26, 145] } },
+  { label: '🦘 Australia & NZ', bounds: { lat: [-47, -10], lng: [110, 178] } },
   { label: '🌍 Africa', bounds: { lat: [-35, 38], lng: [-18, 52] } },
   { label: '🌍 Global', km: 99999 },
 ]

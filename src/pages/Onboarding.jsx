@@ -4,7 +4,13 @@ import { upsertProfile } from '../lib/supabase'
 
 const AVATARS = ['🐨','🦊','🐺','🦁','🐸','🦋','🦔','🐧','🦦','🐙','🦜','🐬','🦌','🐼','🦘','🦈','🐻','🦒','🐘','🦏','🐆','🦓','🦅','🦚','🦩','🐊','🐇','🦝','🦫','🐿️','🦉','🦛','🐃','🦬']
 const AGE_GROUPS = ['Prefer not to say','under 18','18–21','22–25','26–29','30–39','40+']
-const IDENTITY_OPTIONS = ['LGBTQ+','ADHD','Autism','AuDHD']
+const IDENTITY_OPTIONS = [
+  { group: 'Orientation & Gender', items: ['LGBTQ+'] },
+  { group: 'Neurodivergent', items: ['ADHD', 'Autism', 'AuDHD', 'Dyslexia', 'Dyscalculia'] },
+  { group: 'Mental Health', items: ['Depression', 'Anxiety', 'BPD', 'PTSD / cPTSD', 'Bipolar'] },
+  { group: 'Physical', items: ['Chronic illness', 'Physical disability', 'Hearing impaired', 'Visually impaired'] },
+]
+const ALL_IDENTITIES = IDENTITY_OPTIONS.flatMap(g => g.items)
 
 export default function Onboarding() {
   const { user, setProfile } = useAuth()
@@ -87,16 +93,21 @@ export default function Onboarding() {
 
       <div className="form-group">
         <label className="form-label">Community (optional)</label>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-          {IDENTITY_OPTIONS.map(id => (
-            <div key={id} onClick={() => toggleIdentity(id)}
-              style={{ padding: '8px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer', border: '0.5px solid', borderColor: identities.includes(id) ? 'var(--accent)' : 'var(--border)', background: identities.includes(id) ? 'var(--accent-light)' : 'var(--bg2)', color: identities.includes(id) ? 'var(--accent)' : 'var(--text2)' }}>
-              {id}
+        {IDENTITY_OPTIONS.map(group => (
+          <div key={group.group} style={{ marginTop: 10 }}>
+            <div style={{ fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>{group.group}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {group.items.map(id => (
+                <div key={id} onClick={() => toggleIdentity(id)}
+                  style={{ padding: '7px 12px', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer', border: '0.5px solid', borderColor: identities.includes(id) ? 'var(--accent)' : 'var(--border)', background: identities.includes(id) ? 'var(--accent-light)' : 'var(--bg2)', color: identities.includes(id) ? 'var(--accent)' : 'var(--text2)' }}>
+                  {id}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
         {identities.length > 0 && (
-          <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
             <input type="checkbox" id="id-vis" checked={visibility.identities} onChange={e => setVisibility(v => ({...v, identities: e.target.checked}))} />
             <label htmlFor="id-vis" style={{ fontSize: 12, color: 'var(--text3)' }}>Show on profile</label>
           </div>

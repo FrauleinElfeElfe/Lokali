@@ -7,6 +7,7 @@ import Chats from './pages/Chats'
 import ChatDetail from './pages/ChatDetail'
 import Profile from './pages/Profile'
 import PublicProfile from './pages/PublicProfile'
+import Legal from './pages/Legal'
 import Layout from './components/Layout'
 import './index.css'
 
@@ -23,6 +24,7 @@ function AppRoutes() {
         <Route path="/chats/:userId" element={<ChatDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
+        <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Layout>
