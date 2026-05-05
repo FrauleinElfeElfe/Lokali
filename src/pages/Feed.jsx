@@ -4,9 +4,8 @@ import { supabase, createPost, fetchComments, addComment, reportPost } from '../
 import { useNavigate } from 'react-router-dom'
 
 const DISTANCE_RADII = [
-  { label: '2 km', km: 2 }, { label: '5 km', km: 5 }, { label: '10 km', km: 10 },
+  { label: '5 km', km: 5 }, { label: '10 km', km: 10 },
   { label: '25 km', km: 25 }, { label: '50 km', km: 50 }, { label: '100 km', km: 100 },
-  { label: '🗺️ Nationwide', km: 999 },
 ]
 
 const EUROPE_COUNTRIES = [
@@ -65,9 +64,9 @@ export default function Feed() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
   const [posts, setPosts] = useState([])
-  const [radius, setRadius] = useState(2)
+  const [radius, setRadius] = useState(5)
   const [activeBounds, setActiveBounds] = useState(null)
-  const [activeLabel, setActiveLabel] = useState('2 km')
+  const [activeLabel, setActiveLabel] = useState('5 km')
   const [loc, setLoc] = useState(null)
   const [locDenied, setLocDenied] = useState(false)
   const [text, setText] = useState('')
