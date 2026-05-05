@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom'
 
 export default function Legal() {
   const navigate = useNavigate()
-  const email = 'privacy@lokali.app' // <- deine echte Email eintragen!
+  const email = 'wriedtsarah@googlemail.com'
   const name = 'Sarah Wriedt' // <- deinen echten Namen eintragen!
-  const address = 'Kiel, Deutschland' // <- deine Adresse eintragen!
+  const address = 'Mühlenweg 112, 24116 Kiel, Deutschland' // <- deine Adresse eintragen!
 
   return (
     <div style={{ padding: '0 0 80px' }}>
