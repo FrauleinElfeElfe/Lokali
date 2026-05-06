@@ -42,11 +42,22 @@ export default function Login() {
         <div style={{ fontFamily: 'Caveat, cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>lokali</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', fontStyle: 'italic', marginTop: 2, marginBottom: 16 }}>from online back to real life 🌳</div>
         <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
-          Most apps ask you to judge someone before you even know them – swipe left or right, follow or unfollow.
+          <strong>Find your online besties nearby 💬✨</strong>
           <br /><br />
-          lokali flips that around. <strong>Meet first, decide later.</strong> Find people nearby, chat spontaneously, and let real connections grow naturally – without the pressure of self-promotion, likes, or follower counts.
+          Spontaneous conversations — no swiping, no rankings. Simply two people who happened to be in the same place, starting a conversation.
           <br /><br />
-          Just two people who happened to be in the same place at the same time. 🌳
+          <strong>What makes lokali different?</strong>
+          <br /><br />
+          <strong>1. The problem with most apps:</strong><br />
+          Intention (friendship/relationship) → Decision about the person (yes/no, swiping) → Getting to know each other
+          <br /><br />
+          But it should be the other way around:<br />
+          Getting to know each other → Deciding whether you like them → Building a friendship or relationship
+          <br /><br />
+          Many people today struggle with real-life interaction. lokali helps you build connections with people nearby — close enough that taking things offline is actually possible.
+          <br /><br />
+          <strong>2. Reducing toxicity.</strong><br />
+          lokali is only partially anonymous – yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
         </p>
       </div>
 
