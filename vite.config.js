@@ -7,11 +7,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+      },
       manifest: {
         name: 'lokali',
         short_name: 'lokali',
-        description: 'Die Online-Besties ganz in der Nähe finden',
-        theme_color: '#5b4fff',
+        description: 'Find your online besties nearby',
+        theme_color: '#639922',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
