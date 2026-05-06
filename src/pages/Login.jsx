@@ -9,8 +9,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
 
+  const [ageConfirmed, setAgeConfirmed] = useState(false)
+
   async function handle() {
     if (!email || !password) { setMsg('Please fill in all fields'); return }
+    if (mode === 'signup' && !ageConfirmed) { setMsg('Please confirm you are 18 or older.'); return }
     setLoading(true); setMsg('')
     try {
       if (mode === 'signup') {
@@ -69,6 +72,15 @@ export default function Login() {
           value={password} onChange={e => setPassword(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handle()} />
       </div>
+      {mode === 'signup' && (
+        <div style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom:16, padding:'12px 14px', background:'var(--bg2)', borderRadius:10, border:'0.5px solid var(--border)' }}>
+          <input type="checkbox" id="age-check" checked={ageConfirmed} onChange={e => setAgeConfirmed(e.target.checked)}
+            style={{ marginTop:2, flexShrink:0, accentColor:'var(--accent)', width:16, height:16 }} />
+          <label htmlFor="age-check" style={{ fontSize:13, color:'var(--text2)', lineHeight:1.5, cursor:'pointer' }}>
+            I confirm that I am <strong>18 years of age or older</strong> and agree to the <span style={{ color:'var(--accent)', cursor:'pointer' }} onClick={() => window.location.href='/legal'}>Community Guidelines & Privacy Policy</span>.
+          </label>
+        </div>
+      )}
       {msg && <p style={{ fontSize: 13, color: 'var(--accent)', marginBottom: 8, lineHeight: 1.5 }}>{msg}</p>}
       <button className="btn-primary" onClick={handle} disabled={loading}>
         {loading ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}

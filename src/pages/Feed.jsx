@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { supabase, createPost, fetchComments, addComment, reportPost } from '../lib/supabase'
+import { supabase, createPost, fetchComments, addComment } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 
 const DISTANCE_RADII = [
@@ -49,6 +49,16 @@ const CONTINENTS = [
 
 const EMOJIS = ['😊','😂','❤️','🔥','👍','🙌','😍','🤔','😅','🥰','😭','🎉','✨','💪','🙏','😎','🤩','😇','🥳','😴','🤗','💚','🌳','🐨','🦊','🐸','🦋','🦔','🐧','🦦','🐙']
 
+const REPORT_REASONS = [
+  'Hate speech / discrimination',
+  'Harassment or bullying',
+  'NSFW / explicit content',
+  'Spam or scam',
+  'Misinformation',
+  'Underage user',
+  'Other',
+]
+
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
   if (d < 60) return 'just now'
@@ -56,6 +66,7 @@ function timeAgo(ts) {
   if (d < 86400) return `${Math.floor(d/3600)} h ago`
   return `${Math.floor(d/86400)} days ago`
 }
+
 function fmtDist(m) {
   if (!m && m !== 0) return ''
   return m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(1)} km`
@@ -79,18 +90,8 @@ export default function Feed() {
   const [toast, setToast] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
   const [showEuropeMenu, setShowEuropeMenu] = useState(false)
-  const [reportPost, setReportPost] = useState(null) // { id, username }
+  const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
-
-  const REPORT_REASONS = [
-    'Hate speech / discrimination',
-    'Harassment or bullying',
-    'NSFW / explicit content',
-    'Spam or scam',
-    'Misinformation',
-    'Underage user',
-    'Other',
-  ]
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
 
@@ -104,7 +105,7 @@ export default function Feed() {
   useEffect(() => {
     if (!loc) return
     load()
-    const ch = supabase.channel('posts-feed-v3')
+    const ch = supabase.channel('posts-feed-v4')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, load)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, load)
       .subscribe()
@@ -129,7 +130,9 @@ export default function Feed() {
         data = d
       } else {
         try {
-          const { data: d } = await supabase.rpc('posts_within_radius', { user_lat: loc.lat, user_lng: loc.lng, radius_km: radius })
+          const { data: d } = await supabase.rpc('posts_within_radius', {
+            user_lat: loc.lat, user_lng: loc.lng, radius_km: radius
+          })
           data = d
         } catch {
           const { data: d } = await supabase.from('posts')
@@ -146,17 +149,7 @@ export default function Feed() {
     } catch (e) { console.error(e) }
   }
 
-  async function submitReport() {
-    if (!reportReason) { showToast('Please select a reason'); return }
-    await supabase.from('reports').insert({
-      post_id: reportPost.id,
-      reporter_id: user.id,
-      reason: reportReason
-    })
-    setReportPost(null)
-    setReportReason('')
-    showToast('Reported – thank you! We will review this. ✓')
-  }
+  function selectDistance(r) {
     if (locDenied) { showToast('Enable location to use distance filters'); return }
     setRadius(r.km); setActiveBounds(null); setActiveLabel(r.label)
     setShowEuropeMenu(false)
@@ -178,8 +171,13 @@ export default function Feed() {
     if (!text.trim()) return
     setSending(true)
     try {
-      await createPost(user.id, text.trim(), loc?.lat !== 0 ? loc?.lat : null, loc?.lng !== 0 ? loc?.lng : null)
-      setText(''); showToast('Post published! ✓'); load()
+      await createPost(user.id, text.trim(),
+        loc?.lat !== 0 ? loc?.lat : null,
+        loc?.lng !== 0 ? loc?.lng : null
+      )
+      setText('')
+      showToast('Post published! ✓')
+      load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }
   }
@@ -204,6 +202,18 @@ export default function Feed() {
     setCntData(p => ({ ...p, [id]: data.length }))
   }
 
+  async function submitReport() {
+    if (!reportReason) { showToast('Please select a reason'); return }
+    await supabase.from('reports').insert({
+      post_id: reportTarget.id,
+      reporter_id: user.id,
+      reason: reportReason
+    })
+    setReportTarget(null)
+    setReportReason('')
+    showToast('Reported – thank you! We will review this. ✓')
+  }
+
   return (
     <>
       {locDenied && (
@@ -218,21 +228,23 @@ export default function Feed() {
 
       <div style={{ position:'relative' }}>
         <div style={{ position:'relative', display:'flex', alignItems:'center', borderBottom:'0.5px solid var(--border)' }}>
-          <button onClick={() => document.getElementById('radius-scroll').scrollBy({left:-120,behavior:'smooth'})}
+          <button onClick={() => document.getElementById('radius-scroll').scrollBy({ left: -120, behavior: 'smooth' })}
             style={{ position:'absolute', left:0, zIndex:5, background:'linear-gradient(to right, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>‹</button>
           <div id="radius-scroll" className="radius-bar" style={{ borderBottom:'none', paddingLeft:32, paddingRight:32 }}>
             {DISTANCE_RADII.map(r => (
-              <div key={r.km} className={`radius-chip ${activeLabel === r.label ? 'active' : ''}`} onClick={() => selectDistance(r)}>{r.label}</div>
+              <div key={r.km} className={`radius-chip ${activeLabel === r.label ? 'active' : ''}`}
+                onClick={() => selectDistance(r)}>{r.label}</div>
             ))}
             <div className={`radius-chip ${showEuropeMenu || EUROPE_COUNTRIES.some(c => c.label === activeLabel) ? 'active' : ''}`}
               onClick={() => setShowEuropeMenu(s => !s)} style={{ whiteSpace:'nowrap' }}>
               🇪🇺 Europe {showEuropeMenu ? '▴' : '▾'}
             </div>
             {CONTINENTS.map(c => (
-              <div key={c.label} className={`radius-chip ${activeLabel === c.label ? 'active' : ''}`} onClick={() => selectContinent(c)}>{c.label}</div>
+              <div key={c.label} className={`radius-chip ${activeLabel === c.label ? 'active' : ''}`}
+                onClick={() => selectContinent(c)}>{c.label}</div>
             ))}
           </div>
-          <button onClick={() => document.getElementById('radius-scroll').scrollBy({left:120,behavior:'smooth'})}
+          <button onClick={() => document.getElementById('radius-scroll').scrollBy({ left: 120, behavior: 'smooth' })}
             style={{ position:'absolute', right:0, zIndex:5, background:'linear-gradient(to left, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>›</button>
         </div>
 
@@ -256,13 +268,15 @@ export default function Feed() {
           <textarea className="compose-input" placeholder="What's happening near you?"
             value={text} onChange={e => setText(e.target.value)}
             onInput={e => { e.target.style.height='auto'; e.target.style.height=Math.min(e.target.scrollHeight,120)+'px' }}
-            onKeyDown={e => { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();handlePost()} }}
+            onKeyDown={e => { if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); handlePost() } }}
             style={{ width:'100%', paddingRight:40 }} />
-          <button onClick={() => setShowEmoji(s => !s)} style={{ position:'absolute', right:8, bottom:10, background:'none', border:'none', fontSize:18, cursor:'pointer', opacity:0.6 }}>😊</button>
+          <button onClick={() => setShowEmoji(s => !s)}
+            style={{ position:'absolute', right:8, bottom:10, background:'none', border:'none', fontSize:18, cursor:'pointer', opacity:0.6 }}>😊</button>
           {showEmoji && (
             <div style={{ position:'absolute', top:'100%', left:0, right:0, marginTop:4, background:'var(--bg)', border:'0.5px solid var(--border)', borderRadius:12, padding:10, display:'flex', flexWrap:'wrap', gap:4, zIndex:50, boxShadow:'0 4px 20px rgba(0,0,0,0.12)' }}>
               {EMOJIS.map(e => (
-                <span key={e} onClick={() => { setText(t => t + e); setShowEmoji(false) }} style={{ fontSize:22, cursor:'pointer', padding:3, borderRadius:6 }}>{e}</span>
+                <span key={e} onClick={() => { setText(t => t + e); setShowEmoji(false) }}
+                  style={{ fontSize:22, cursor:'pointer', padding:3, borderRadius:6 }}>{e}</span>
               ))}
             </div>
           )}
@@ -297,8 +311,17 @@ export default function Feed() {
                 <button className="action-btn" onClick={() => toggleCmts(post.id)}>
                   💬 {openCmts[post.id] ? cmts.length : cntDisplay}
                 </button>
-                {!isOwn && <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>✉ Message</button>}
-                <button className="action-btn report" onClick={() => { setReportPost({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>⚑ Report</button>
+                {!isOwn && (
+                  <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>
+                    ✉ Message
+                  </button>
+                )}
+                {!isOwn && (
+                  <button className="action-btn report"
+                    onClick={() => { setReportTarget({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>
+                    ⚑ Report
+                  </button>
+                )}
               </div>
               {openCmts[post.id] && (
                 <div className="comments-wrap">
@@ -315,8 +338,8 @@ export default function Feed() {
                   <div className="add-comment">
                     <div style={{ fontSize:16 }}>{profile?.avatar}</div>
                     <input placeholder="Add a comment..." value={cmtText[post.id]||''}
-                      onChange={e => setCmtText(p=>({...p,[post.id]:e.target.value}))}
-                      onKeyDown={e => e.key==='Enter'&&submitCmt(post.id)} />
+                      onChange={e => setCmtText(p => ({ ...p, [post.id]: e.target.value }))}
+                      onKeyDown={e => e.key==='Enter' && submitCmt(post.id)} />
                     <button onClick={() => submitCmt(post.id)}>Send</button>
                   </div>
                 </div>
@@ -325,6 +348,34 @@ export default function Feed() {
           )
         })
       }
+
+      {reportTarget && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div style={{ background:'var(--bg)', borderRadius:16, padding:24, maxWidth:360, width:'100%' }}>
+            <div style={{ fontSize:16, fontWeight:700, marginBottom:4 }}>⚑ Report post</div>
+            <div style={{ fontSize:13, color:'var(--text3)', marginBottom:16 }}>by @{reportTarget.username}</div>
+            <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
+              {REPORT_REASONS.map(r => (
+                <div key={r} onClick={() => setReportReason(r)}
+                  style={{ padding:'10px 14px', borderRadius:10, fontSize:13, cursor:'pointer', border:'0.5px solid', borderColor: reportReason === r ? 'var(--accent)' : 'var(--border)', background: reportReason === r ? 'var(--accent-light)' : 'var(--bg2)', color: reportReason === r ? 'var(--accent)' : 'var(--text2)', fontWeight: reportReason === r ? 600 : 400 }}>
+                  {r}
+                </div>
+              ))}
+            </div>
+            <div style={{ display:'flex', gap:8 }}>
+              <button onClick={() => setReportTarget(null)}
+                style={{ flex:1, padding:10, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13 }}>
+                Cancel
+              </button>
+              <button onClick={submitReport}
+                style={{ flex:1, padding:10, background:'var(--accent)', color:'white', border:'none', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600 }}>
+                Submit report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
     </>
   )
