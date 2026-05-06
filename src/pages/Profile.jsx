@@ -34,7 +34,7 @@ export default function Profile() {
   const [msg, setMsg] = useState('')
   const [toast, setToast] = useState('')
 
-  const AGE_GROUPS = ['Prefer not to say','under 18','18–21','22–25','26–29','30–39','40+']
+  const AGE_GROUPS = ['Prefer not to say','18–21','22–25','26–29','30–39','40+']
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
 
