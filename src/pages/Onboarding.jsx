@@ -3,14 +3,13 @@ import { useAuth } from '../lib/AuthContext'
 import { upsertProfile } from '../lib/supabase'
 
 const AVATARS = ['🐨','🦊','🐺','🦁','🐸','🦋','🦔','🐧','🦦','🐙','🦜','🐬','🦌','🐼','🦘','🦈','🐻','🦒','🐘','🦏','🐆','🦓','🦅','🦚','🦩','🐊','🐇','🦝','🦫','🐿️','🦉','🦛','🐃','🦬']
-const AGE_GROUPS = ['Prefer not to say','under 18','18–21','22–25','26–29','30–39','40+']
+const AGE_GROUPS = ['Prefer not to say','18–21','22–25','26–29','30–39','40+']
 const IDENTITY_OPTIONS = [
   { group: 'Orientation & Gender', items: ['LGBTQ+'] },
   { group: 'Neurodivergent', items: ['ADHD', 'Autism', 'AuDHD', 'Dyslexia', 'Dyscalculia'] },
   { group: 'Mental Health', items: ['Depression', 'Anxiety', 'BPD', 'PTSD / cPTSD', 'Bipolar'] },
   { group: 'Physical', items: ['Chronic illness', 'Physical disability', 'Hearing impaired', 'Visually impaired'] },
 ]
-const ALL_IDENTITIES = IDENTITY_OPTIONS.flatMap(g => g.items)
 
 export default function Onboarding() {
   const { user, setProfile } = useAuth()
@@ -49,12 +48,12 @@ export default function Onboarding() {
       <div style={{ fontFamily: 'Caveat, cursive', fontSize: 32, fontWeight: 700, color: 'var(--accent)', marginBottom: 2 }}>lokali</div>
       <div style={{ fontSize: 11, color: 'var(--accent)', fontStyle: 'italic', marginBottom: 10 }}>from online back to real life 🌳</div>
       <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 28, lineHeight: 1.65 }}>
-        Set up your profile to get started.
+        Set up your profile to get started. lokali is for users aged 18 and over.
       </p>
 
       <div className="form-group">
         <label className="form-label">Username</label>
-        <input className="form-input" placeholder="e.g. lena_kiel" maxLength={20}
+        <input className="form-input" placeholder="e.g. nightowl, wanderer, quietstorm…" maxLength={20}
           value={username} onChange={e => setUsername(e.target.value)} />
       </div>
 

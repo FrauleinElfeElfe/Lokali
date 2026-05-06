@@ -66,8 +66,8 @@ export default function ChatDetail() {
     <div style={{ display:'flex', flexDirection:'column', height:'calc(100dvh - 56px)' }}>
       <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 20px', borderBottom:'0.5px solid var(--border)', background:'var(--bg)', position:'sticky', top:0, zIndex:10 }}>
         <button className="back-btn" onClick={() => navigate('/chats')}>←</button>
-        <div className="avatar">{other?.avatar || '🌳'}</div>
-        <div style={{ fontWeight:600, fontSize:15 }}>{other?.username || '...'}</div>
+        <div className="avatar" style={{ cursor:'pointer' }} onClick={() => navigate(`/profile/${userId}`)}>{other?.avatar || '🌳'}</div>
+        <div style={{ fontWeight:600, fontSize:15, cursor:'pointer' }} onClick={() => navigate(`/profile/${userId}`)}>{other?.username || '...'}</div>
       </div>
       <div style={{ flex:1, overflowY:'auto', padding:'16px 20px' }}>
         {msgs.length === 0 && <div className="empty-state" style={{ padding:'40px 0' }}>Say hello! 👋</div>}

@@ -8,8 +8,8 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
-
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false)
 
   async function handle() {
     if (!email || !password) { setMsg('Please fill in all fields'); return }
@@ -37,16 +37,20 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: '48px 24px', maxWidth: 440, margin: '0 auto' }}>
-      <div style={{ marginBottom: 32 }}>
+    <div style={{ padding: '40px 24px', maxWidth: 440, margin: '0 auto' }}>
+      <div style={{ marginBottom: 28 }}>
         <div style={{ fontFamily: 'Caveat, cursive', fontSize: 52, fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>lokali</div>
-        <div style={{ fontSize: 11, color: 'var(--accent)', fontStyle: 'italic', marginTop: 2, marginBottom: 12 }}>from online back to real life 🌳</div>
-        <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.65 }}>
-          Find your online besties nearby – spontaneous conversations without ranking pressure. Simply two people who happened to be in the same place at the same time and struck up a conversation.
+        <div style={{ fontSize: 11, color: 'var(--accent)', fontStyle: 'italic', marginTop: 2, marginBottom: 16 }}>from online back to real life 🌳</div>
+        <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
+          Most apps ask you to judge someone before you even know them – swipe left or right, follow or unfollow.
+          <br /><br />
+          lokali flips that around. <strong>Meet first, decide later.</strong> Find people nearby, chat spontaneously, and let real connections grow naturally – without the pressure of self-promotion, likes, or follower counts.
+          <br /><br />
+          Just two people who happened to be in the same place at the same time. 🌳
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
         {['login', 'signup'].map(m => (
           <button key={m} onClick={() => setMode(m)} style={{
             flex: 1, padding: 10, borderRadius: 10, border: '0.5px solid',
@@ -72,19 +76,55 @@ export default function Login() {
           value={password} onChange={e => setPassword(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handle()} />
       </div>
+
       {mode === 'signup' && (
         <div style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom:16, padding:'12px 14px', background:'var(--bg2)', borderRadius:10, border:'0.5px solid var(--border)' }}>
           <input type="checkbox" id="age-check" checked={ageConfirmed} onChange={e => setAgeConfirmed(e.target.checked)}
             style={{ marginTop:2, flexShrink:0, accentColor:'var(--accent)', width:16, height:16 }} />
           <label htmlFor="age-check" style={{ fontSize:13, color:'var(--text2)', lineHeight:1.5, cursor:'pointer' }}>
-            I confirm that I am <strong>18 years of age or older</strong> and agree to the <span style={{ color:'var(--accent)', cursor:'pointer' }} onClick={() => window.location.href='/legal'}>Community Guidelines & Privacy Policy</span>.
+            I confirm that I am <strong>18 years of age or older</strong> and agree to the{' '}
+            <span style={{ color:'var(--accent)', cursor:'pointer', textDecoration:'underline' }}
+              onClick={() => setShowPrivacy(true)}>
+              Community Guidelines & Privacy Policy
+            </span>.
           </label>
         </div>
       )}
+
       {msg && <p style={{ fontSize: 13, color: 'var(--accent)', marginBottom: 8, lineHeight: 1.5 }}>{msg}</p>}
       <button className="btn-primary" onClick={handle} disabled={loading}>
         {loading ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}
       </button>
+
+      {showPrivacy && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:300, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+          <div style={{ background:'var(--bg)', borderRadius:'16px 16px 0 0', padding:24, maxHeight:'80dvh', overflowY:'auto', width:'100%', maxWidth:440 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <div style={{ fontSize:16, fontWeight:700 }}>Privacy & Guidelines</div>
+              <button onClick={() => setShowPrivacy(false)} style={{ background:'none', border:'none', fontSize:22, cursor:'pointer', color:'var(--text3)' }}>×</button>
+            </div>
+            <div style={{ fontSize:13, color:'var(--text2)', lineHeight:1.7 }}>
+              <strong>lokali is for users 18+.</strong>
+              <br /><br />
+              <strong>Community Guidelines:</strong>
+              <ul style={{ paddingLeft:18, marginTop:6 }}>
+                <li>Treat everyone with respect</li>
+                <li>No hate speech, harassment, or discrimination</li>
+                <li>No NSFW or explicit content</li>
+                <li>No spam or scamming</li>
+                <li>Violations may result in permanent ban</li>
+              </ul>
+              <br />
+              <strong>Data we collect:</strong> Email address, location (GPS, only when permitted), username, and content you post. We do not sell your data. Full privacy policy available in the app under Profile → Privacy Policy.
+              <br /><br />
+              Data is stored securely with Supabase (EU region). You can delete your account at any time.
+            </div>
+            <button onClick={() => setShowPrivacy(false)} className="btn-primary" style={{ marginTop:16 }}>
+              Got it ✓
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
