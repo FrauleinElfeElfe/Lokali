@@ -107,7 +107,15 @@ export default function Login() {
         {loading ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}
       </button>
 
-      {showPrivacy && (
+      <div style={{ marginTop:24, padding:'16px 0', borderTop:'0.5px solid var(--border)', fontSize:12, color:'var(--text3)', textAlign:'center', lineHeight:1.8 }}>
+        <strong style={{ color:'var(--text2)' }}>Impressum</strong><br />
+        Sarah Wriedt · Mühlenweg 112, 24116 Kiel, Deutschland<br />
+        <a href="mailto:wriedtsarah@googlemail.com" style={{ color:'var(--accent)' }}>wriedtsarah@googlemail.com</a><br />
+        lokali is a private non-commercial hobby project.<br /><br />
+        <span onClick={() => setShowPrivacy(true)} style={{ color:'var(--accent)', cursor:'pointer', textDecoration:'underline' }}>
+          Privacy Policy & Community Guidelines
+        </span>
+      </div>
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:300, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
           <div style={{ background:'var(--bg)', borderRadius:'16px 16px 0 0', padding:24, maxHeight:'80dvh', overflowY:'auto', width:'100%', maxWidth:440 }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
