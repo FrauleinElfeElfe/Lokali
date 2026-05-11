@@ -1,5 +1,3 @@
-bash
-cat > /home/claude/lokali-project/src/pages/Feed.jsx << 'FEEDEOF'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase, createPost, fetchComments, addComment } from '../lib/supabase'
