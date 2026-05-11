@@ -10,41 +10,127 @@ const DISTANCE_RADII = [
 
 const EUROPE_COUNTRIES = [
   { label: '🇪🇺 All Europe', bounds: { lat: [34, 72], lng: [-25, 45] } },
-  { label: '🇩🇪 Germany', bounds: { lat: [47.3, 55.1], lng: [5.9, 15.0] } },
+  { label: '🇦🇱 Albania', bounds: { lat: [39.6, 42.7], lng: [19.3, 21.1] } },
   { label: '🇦🇹 Austria', bounds: { lat: [46.4, 49.0], lng: [9.5, 17.2] } },
-  { label: '🇨🇭 Switzerland', bounds: { lat: [45.8, 47.8], lng: [5.9, 10.5] } },
-  { label: '🇮🇹 Italy', bounds: { lat: [36.6, 47.1], lng: [6.6, 18.5] } },
-  { label: '🇫🇷 France', bounds: { lat: [41.3, 51.1], lng: [-5.2, 9.6] } },
-  { label: '🇪🇸 Spain', bounds: { lat: [36.0, 43.8], lng: [-9.3, 4.3] } },
-  { label: '🇵🇹 Portugal', bounds: { lat: [37.0, 42.2], lng: [-9.5, -6.2] } },
-  { label: '🇬🇧 UK', bounds: { lat: [49.9, 60.9], lng: [-8.2, 1.8] } },
-  { label: '🇮🇪 Ireland', bounds: { lat: [51.4, 55.4], lng: [-10.5, -6.0] } },
-  { label: '🇳🇱 Netherlands', bounds: { lat: [50.8, 53.6], lng: [3.3, 7.2] } },
+  { label: '🇧🇾 Belarus', bounds: { lat: [51.3, 56.2], lng: [23.2, 32.8] } },
   { label: '🇧🇪 Belgium', bounds: { lat: [49.5, 51.5], lng: [2.5, 6.4] } },
-  { label: '🇩🇰 Denmark', bounds: { lat: [54.6, 57.8], lng: [8.1, 15.2] } },
-  { label: '🇸🇪 Sweden', bounds: { lat: [55.3, 69.1], lng: [11.1, 24.2] } },
-  { label: '🇳🇴 Norway', bounds: { lat: [57.9, 71.2], lng: [4.6, 31.1] } },
-  { label: '🇫🇮 Finland', bounds: { lat: [59.8, 70.1], lng: [19.1, 31.6] } },
-  { label: '🇵🇱 Poland', bounds: { lat: [49.0, 54.9], lng: [14.1, 24.2] } },
-  { label: '🇨🇿 Czechia', bounds: { lat: [48.6, 51.1], lng: [12.1, 18.9] } },
-  { label: '🇸🇰 Slovakia', bounds: { lat: [47.7, 49.6], lng: [16.8, 22.6] } },
-  { label: '🇭🇺 Hungary', bounds: { lat: [45.7, 48.6], lng: [16.1, 22.9] } },
-  { label: '🇷🇴 Romania', bounds: { lat: [43.6, 48.3], lng: [20.3, 30.0] } },
+  { label: '🇧🇦 Bosnia & Herz.', bounds: { lat: [42.6, 45.3], lng: [15.7, 19.7] } },
   { label: '🇧🇬 Bulgaria', bounds: { lat: [41.2, 44.2], lng: [22.4, 28.6] } },
-  { label: '🇬🇷 Greece', bounds: { lat: [34.8, 42.0], lng: [19.4, 29.7] } },
   { label: '🇭🇷 Croatia', bounds: { lat: [42.4, 46.6], lng: [13.5, 19.4] } },
-  { label: '🇸🇮 Slovenia', bounds: { lat: [45.4, 46.9], lng: [13.4, 16.6] } },
+  { label: '🇨🇾 Cyprus', bounds: { lat: [34.6, 35.7], lng: [32.3, 34.6] } },
+  { label: '🇨🇿 Czechia', bounds: { lat: [48.6, 51.1], lng: [12.1, 18.9] } },
+  { label: '🇩🇰 Denmark', bounds: { lat: [54.6, 57.8], lng: [8.1, 15.2] } },
+  { label: '🇪🇪 Estonia', bounds: { lat: [57.5, 59.7], lng: [21.8, 28.2] } },
+  { label: '🇫🇮 Finland', bounds: { lat: [59.8, 70.1], lng: [19.1, 31.6] } },
+  { label: '🇫🇷 France', bounds: { lat: [41.3, 51.1], lng: [-5.2, 9.6] } },
+  { label: '🇩🇪 Germany', bounds: { lat: [47.3, 55.1], lng: [5.9, 15.0] } },
+  { label: '🇬🇷 Greece', bounds: { lat: [34.8, 42.0], lng: [19.4, 29.7] } },
+  { label: '🇭🇺 Hungary', bounds: { lat: [45.7, 48.6], lng: [16.1, 22.9] } },
+  { label: '🇮🇸 Iceland', bounds: { lat: [63.4, 66.5], lng: [-24.5, -13.5] } },
+  { label: '🇮🇪 Ireland', bounds: { lat: [51.4, 55.4], lng: [-10.5, -6.0] } },
+  { label: '🇮🇹 Italy', bounds: { lat: [36.6, 47.1], lng: [6.6, 18.5] } },
+  { label: '🇽🇰 Kosovo', bounds: { lat: [41.9, 43.3], lng: [20.0, 21.8] } },
+  { label: '🇱🇻 Latvia', bounds: { lat: [55.7, 58.1], lng: [20.9, 28.2] } },
+  { label: '🇱🇮 Liechtenstein', bounds: { lat: [47.0, 47.3], lng: [9.5, 9.6] } },
+  { label: '🇱🇹 Lithuania', bounds: { lat: [53.9, 56.5], lng: [21.0, 26.8] } },
+  { label: '🇱🇺 Luxembourg', bounds: { lat: [49.4, 50.2], lng: [5.7, 6.5] } },
+  { label: '🇲🇹 Malta', bounds: { lat: [35.8, 36.1], lng: [14.2, 14.6] } },
+  { label: '🇲🇩 Moldova', bounds: { lat: [45.5, 48.5], lng: [26.6, 30.2] } },
+  { label: '🇲🇪 Montenegro', bounds: { lat: [41.9, 43.6], lng: [18.4, 20.4] } },
+  { label: '🇳🇱 Netherlands', bounds: { lat: [50.8, 53.6], lng: [3.3, 7.2] } },
+  { label: '🇲🇰 North Macedonia', bounds: { lat: [40.9, 42.4], lng: [20.5, 23.1] } },
+  { label: '🇳🇴 Norway', bounds: { lat: [57.9, 71.2], lng: [4.6, 31.1] } },
+  { label: '🇵🇱 Poland', bounds: { lat: [49.0, 54.9], lng: [14.1, 24.2] } },
+  { label: '🇵🇹 Portugal', bounds: { lat: [37.0, 42.2], lng: [-9.5, -6.2] } },
+  { label: '🇷🇴 Romania', bounds: { lat: [43.6, 48.3], lng: [20.3, 30.0] } },
   { label: '🇷🇸 Serbia', bounds: { lat: [42.2, 46.2], lng: [18.8, 23.0] } },
-  { label: '🇺🇦 Ukraine', bounds: { lat: [44.4, 52.4], lng: [22.1, 40.2] } },
+  { label: '🇸🇰 Slovakia', bounds: { lat: [47.7, 49.6], lng: [16.8, 22.6] } },
+  { label: '🇸🇮 Slovenia', bounds: { lat: [45.4, 46.9], lng: [13.4, 16.6] } },
+  { label: '🇪🇸 Spain', bounds: { lat: [36.0, 43.8], lng: [-9.3, 4.3] } },
+  { label: '🇸🇪 Sweden', bounds: { lat: [55.3, 69.1], lng: [11.1, 24.2] } },
+  { label: '🇨🇭 Switzerland', bounds: { lat: [45.8, 47.8], lng: [5.9, 10.5] } },
   { label: '🇹🇷 Turkey', bounds: { lat: [35.8, 42.1], lng: [26.0, 44.8] } },
+  { label: '🇺🇦 Ukraine', bounds: { lat: [44.4, 52.4], lng: [22.1, 40.2] } },
+  { label: '🇬🇧 UK', bounds: { lat: [49.9, 60.9], lng: [-8.2, 1.8] } },
 ]
 
-const CONTINENTS = [
-  { label: '🌎 Americas', bounds: { lat: [-56, 72], lng: [-168, -34] } },
-  { label: '🌏 Asia', bounds: { lat: [-10, 77], lng: [26, 145] } },
-  { label: '🦘 Australia & NZ', bounds: { lat: [-47, -10], lng: [110, 178] } },
-  { label: '🌍 Africa', bounds: { lat: [-35, 38], lng: [-18, 52] } },
-  { label: '🌍 Global', km: 99999 },
+const AMERICAS_COUNTRIES = [
+  { label: '🌎 All Americas', bounds: { lat: [-56, 72], lng: [-168, -34] } },
+  { label: '🇦🇷 Argentina', bounds: { lat: [-55, -21], lng: [-73, -53] } },
+  { label: '🇧🇴 Bolivia', bounds: { lat: [-23, -9], lng: [-69, -57] } },
+  { label: '🇧🇷 Brazil', bounds: { lat: [-33, 5], lng: [-73, -35] } },
+  { label: '🇨🇦 Canada', bounds: { lat: [42, 83], lng: [-141, -52] } },
+  { label: '🇨🇱 Chile', bounds: { lat: [-56, -17], lng: [-75, -66] } },
+  { label: '🇨🇴 Colombia', bounds: { lat: [-4, 13], lng: [-79, -66] } },
+  { label: '🇨🇷 Costa Rica', bounds: { lat: [8, 11], lng: [-86, -82] } },
+  { label: '🇨🇺 Cuba', bounds: { lat: [19, 23], lng: [-85, -74] } },
+  { label: '🇩🇴 Dominican Rep.', bounds: { lat: [17, 20], lng: [-72, -68] } },
+  { label: '🇪🇨 Ecuador', bounds: { lat: [-5, 2], lng: [-81, -75] } },
+  { label: '🇸🇻 El Salvador', bounds: { lat: [13, 14], lng: [-90, -87] } },
+  { label: '🇬🇹 Guatemala', bounds: { lat: [13, 18], lng: [-92, -88] } },
+  { label: '🇭🇳 Honduras', bounds: { lat: [13, 16], lng: [-89, -83] } },
+  { label: '🇲🇽 Mexico', bounds: { lat: [14, 33], lng: [-118, -86] } },
+  { label: '🇳🇮 Nicaragua', bounds: { lat: [10, 15], lng: [-88, -83] } },
+  { label: '🇵🇦 Panama', bounds: { lat: [7, 10], lng: [-83, -77] } },
+  { label: '🇵🇾 Paraguay', bounds: { lat: [-27, -19], lng: [-62, -54] } },
+  { label: '🇵🇪 Peru', bounds: { lat: [-18, -1], lng: [-81, -68] } },
+  { label: '🇵🇷 Puerto Rico', bounds: { lat: [17, 19], lng: [-68, -65] } },
+  { label: '🇺🇾 Uruguay', bounds: { lat: [-35, -30], lng: [-58, -53] } },
+  { label: '🇺🇸 USA', bounds: { lat: [24, 50], lng: [-125, -66] } },
+  { label: '🇻🇪 Venezuela', bounds: { lat: [0, 12], lng: [-73, -59] } },
+]
+
+const ASIA_COUNTRIES = [
+  { label: '🌏 All Asia & Pacific', bounds: { lat: [-50, 77], lng: [26, 180] } },
+  { label: '🇦🇺 Australia', bounds: { lat: [-44, -10], lng: [113, 154] } },
+  { label: '🇧🇩 Bangladesh', bounds: { lat: [20, 27], lng: [88, 93] } },
+  { label: '🇨🇳 China', bounds: { lat: [18, 54], lng: [73, 135] } },
+  { label: '🇫🇯 Fiji', bounds: { lat: [-20, -15], lng: [177, 180] } },
+  { label: '🇮🇳 India', bounds: { lat: [8, 37], lng: [68, 97] } },
+  { label: '🇮🇩 Indonesia', bounds: { lat: [-11, 6], lng: [95, 141] } },
+  { label: '🇮🇷 Iran', bounds: { lat: [25, 40], lng: [44, 64] } },
+  { label: '🇮🇶 Iraq', bounds: { lat: [29, 38], lng: [38, 49] } },
+  { label: '🇮🇱 Israel', bounds: { lat: [29, 33], lng: [34, 36] } },
+  { label: '🇯🇵 Japan', bounds: { lat: [24, 46], lng: [122, 146] } },
+  { label: '🇯🇴 Jordan', bounds: { lat: [29, 33], lng: [35, 39] } },
+  { label: '🇰🇿 Kazakhstan', bounds: { lat: [41, 56], lng: [51, 88] } },
+  { label: '🇰🇷 South Korea', bounds: { lat: [33, 39], lng: [124, 130] } },
+  { label: '🇰🇼 Kuwait', bounds: { lat: [28, 30], lng: [46, 49] } },
+  { label: '🇱🇧 Lebanon', bounds: { lat: [33, 34], lng: [35, 37] } },
+  { label: '🇲🇾 Malaysia', bounds: { lat: [1, 7], lng: [100, 119] } },
+  { label: '🇳🇵 Nepal', bounds: { lat: [26, 30], lng: [80, 88] } },
+  { label: '🇳🇿 New Zealand', bounds: { lat: [-47, -34], lng: [166, 178] } },
+  { label: '🇵🇰 Pakistan', bounds: { lat: [23, 37], lng: [60, 78] } },
+  { label: '🇵🇭 Philippines', bounds: { lat: [4, 21], lng: [116, 127] } },
+  { label: '🇸🇦 Saudi Arabia', bounds: { lat: [16, 32], lng: [36, 56] } },
+  { label: '🇸🇬 Singapore', bounds: { lat: [1.1, 1.5], lng: [103.6, 104.1] } },
+  { label: '🇱🇰 Sri Lanka', bounds: { lat: [5, 10], lng: [79, 82] } },
+  { label: '🇹🇼 Taiwan', bounds: { lat: [21, 25], lng: [120, 122] } },
+  { label: '🇹🇭 Thailand', bounds: { lat: [5, 21], lng: [97, 106] } },
+  { label: '🇦🇪 UAE', bounds: { lat: [22, 26], lng: [51, 56] } },
+  { label: '🇻🇳 Vietnam', bounds: { lat: [8, 23], lng: [102, 110] } },
+]
+
+const AFRICA_COUNTRIES = [
+  { label: '🌍 All Africa', bounds: { lat: [-35, 38], lng: [-18, 52] } },
+  { label: '🇩🇿 Algeria', bounds: { lat: [19, 37], lng: [-9, 12] } },
+  { label: '🇦🇴 Angola', bounds: { lat: [-18, -4], lng: [11, 25] } },
+  { label: '🇨🇲 Cameroon', bounds: { lat: [1, 13], lng: [8, 16] } },
+  { label: '🇪🇬 Egypt', bounds: { lat: [22, 32], lng: [24, 37] } },
+  { label: '🇪🇹 Ethiopia', bounds: { lat: [3, 15], lng: [33, 48] } },
+  { label: '🇬🇭 Ghana', bounds: { lat: [4, 11], lng: [-3, 1] } },
+  { label: '🇰🇪 Kenya', bounds: { lat: [-5, 5], lng: [33, 42] } },
+  { label: '🇲🇦 Morocco', bounds: { lat: [27, 36], lng: [-14, -1] } },
+  { label: '🇲🇿 Mozambique', bounds: { lat: [-27, -10], lng: [32, 41] } },
+  { label: '🇳🇬 Nigeria', bounds: { lat: [4, 14], lng: [2, 15] } },
+  { label: '🇸🇳 Senegal', bounds: { lat: [12, 16], lng: [-17, -11] } },
+  { label: '🇿🇦 South Africa', bounds: { lat: [-35, -22], lng: [16, 33] } },
+  { label: '🇸🇩 Sudan', bounds: { lat: [9, 23], lng: [21, 39] } },
+  { label: '🇹🇿 Tanzania', bounds: { lat: [-12, -1], lng: [29, 41] } },
+  { label: '🇹🇳 Tunisia', bounds: { lat: [30, 38], lng: [7, 12] } },
+  { label: '🇺🇬 Uganda', bounds: { lat: [-2, 4], lng: [29, 35] } },
+  { label: '🇿🇲 Zambia', bounds: { lat: [-18, -8], lng: [22, 34] } },
+  { label: '🇿🇼 Zimbabwe', bounds: { lat: [-22, -15], lng: [25, 33] } },
 ]
 
 const EMOJIS = ['😊','😂','❤️','🔥','👍','🙌','😍','🤔','😅','🥰','😭','🎉','✨','💪','🙏','😎','🤩','😇','🥳','😴','🤗','💚','🌳','🐨','🦊','🐸','🦋','🦔','🐧','🦦','🐙']
@@ -72,6 +158,21 @@ function fmtDist(m) {
   return m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(1)} km`
 }
 
+function CountryDropdown({ countries, activeLabel, onSelect, onClose }) {
+  return (
+    <div style={{ position:'absolute', top:'100%', left:0, right:0, background:'var(--bg)', border:'0.5px solid var(--border)', borderTop:'none', zIndex:50, maxHeight:300, overflowY:'auto', boxShadow:'0 8px 24px rgba(0,0,0,0.1)' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr' }}>
+        {countries.map(c => (
+          <div key={c.label} onClick={() => { onSelect(c); onClose() }}
+            style={{ padding:'10px 14px', fontSize:13, cursor:'pointer', borderBottom:'0.5px solid var(--border)', color: activeLabel === c.label ? 'var(--accent)' : 'var(--text)', fontWeight: activeLabel === c.label ? 600 : 400, background: activeLabel === c.label ? 'var(--accent-light)' : 'transparent' }}>
+            {c.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Feed() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
@@ -89,7 +190,7 @@ export default function Feed() {
   const [cmtText, setCmtText] = useState({})
   const [toast, setToast] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
-  const [showEuropeMenu, setShowEuropeMenu] = useState(false)
+  const [openMenu, setOpenMenu] = useState(null) // 'europe'|'americas'|'asia'|'africa'
   const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
 
@@ -105,7 +206,7 @@ export default function Feed() {
   useEffect(() => {
     if (!loc) return
     load()
-    const ch = supabase.channel('posts-feed-v4')
+    const ch = supabase.channel('posts-feed-v5')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, load)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, load)
       .subscribe()
@@ -151,20 +252,15 @@ export default function Feed() {
 
   function selectDistance(r) {
     if (locDenied) { showToast('Enable location to use distance filters'); return }
-    setRadius(r.km); setActiveBounds(null); setActiveLabel(r.label)
-    setShowEuropeMenu(false)
+    setRadius(r.km); setActiveBounds(null); setActiveLabel(r.label); setOpenMenu(null)
   }
 
-  function selectEurope(country) {
-    setActiveBounds(country.bounds); setRadius(0); setActiveLabel(country.label)
-    setShowEuropeMenu(false)
+  function selectCountry(c) {
+    setActiveBounds(c.bounds); setRadius(0); setActiveLabel(c.label)
   }
 
-  function selectContinent(c) {
-    if (c.km) { setRadius(c.km); setActiveBounds(null) }
-    else { setActiveBounds(c.bounds); setRadius(0) }
-    setActiveLabel(c.label)
-    setShowEuropeMenu(false)
+  function selectGlobal() {
+    setRadius(99999); setActiveBounds(null); setActiveLabel('🌍 Global'); setOpenMenu(null)
   }
 
   async function handlePost() {
@@ -175,9 +271,7 @@ export default function Feed() {
         loc?.lat !== 0 ? loc?.lat : null,
         loc?.lng !== 0 ? loc?.lng : null
       )
-      setText('')
-      showToast('Post published! ✓')
-      load()
+      setText(''); showToast('Post published! ✓'); load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }
   }
@@ -204,14 +298,20 @@ export default function Feed() {
 
   async function submitReport() {
     if (!reportReason) { showToast('Please select a reason'); return }
-    await supabase.from('reports').insert({
-      post_id: reportTarget.id,
-      reporter_id: user.id,
-      reason: reportReason
-    })
-    setReportTarget(null)
-    setReportReason('')
+    await supabase.from('reports').insert({ post_id: reportTarget.id, reporter_id: user.id, reason: reportReason })
+    setReportTarget(null); setReportReason('')
     showToast('Reported – thank you! We will review this. ✓')
+  }
+
+  const menuBtn = (label, menuKey, countries) => {
+    const isActive = openMenu === menuKey || countries.some(c => c.label === activeLabel)
+    return (
+      <div className={`radius-chip ${isActive ? 'active' : ''}`}
+        onClick={() => setOpenMenu(openMenu === menuKey ? null : menuKey)}
+        style={{ whiteSpace:'nowrap' }}>
+        {label} {openMenu === menuKey ? '▴' : '▾'}
+      </div>
+    )
   }
 
   return (
@@ -221,7 +321,6 @@ export default function Feed() {
           📍 Location access denied – showing <strong>Global</strong> posts. Enable location in your browser to see local posts.
         </div>
       )}
-
       <div style={{ padding:'6px 20px 2px', fontSize:11, color:'var(--text3)', fontStyle:'italic', textAlign:'center' }}>
         from online back to real life 🌳
       </div>
@@ -235,31 +334,21 @@ export default function Feed() {
               <div key={r.km} className={`radius-chip ${activeLabel === r.label ? 'active' : ''}`}
                 onClick={() => selectDistance(r)}>{r.label}</div>
             ))}
-            <div className={`radius-chip ${showEuropeMenu || EUROPE_COUNTRIES.some(c => c.label === activeLabel) ? 'active' : ''}`}
-              onClick={() => setShowEuropeMenu(s => !s)} style={{ whiteSpace:'nowrap' }}>
-              🇪🇺 Europe {showEuropeMenu ? '▴' : '▾'}
-            </div>
-            {CONTINENTS.map(c => (
-              <div key={c.label} className={`radius-chip ${activeLabel === c.label ? 'active' : ''}`}
-                onClick={() => selectContinent(c)}>{c.label}</div>
-            ))}
+            {menuBtn('🇪🇺 Europe', 'europe', EUROPE_COUNTRIES)}
+            {menuBtn('🌎 Americas', 'americas', AMERICAS_COUNTRIES)}
+            {menuBtn('🌏 Asia & Pacific', 'asia', ASIA_COUNTRIES)}
+            {menuBtn('🌍 Africa', 'africa', AFRICA_COUNTRIES)}
+            <div className={`radius-chip ${activeLabel === '🌍 Global' ? 'active' : ''}`}
+              onClick={selectGlobal}>🌍 Global</div>
           </div>
           <button onClick={() => document.getElementById('radius-scroll').scrollBy({ left: 120, behavior: 'smooth' })}
             style={{ position:'absolute', right:0, zIndex:5, background:'linear-gradient(to left, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>›</button>
         </div>
 
-        {showEuropeMenu && (
-          <div style={{ position:'absolute', top:'100%', left:0, right:0, background:'var(--bg)', border:'0.5px solid var(--border)', borderTop:'none', zIndex:50, maxHeight:280, overflowY:'auto', boxShadow:'0 8px 24px rgba(0,0,0,0.1)' }}>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr' }}>
-              {EUROPE_COUNTRIES.map(c => (
-                <div key={c.label} onClick={() => selectEurope(c)}
-                  style={{ padding:'10px 14px', fontSize:13, cursor:'pointer', borderBottom:'0.5px solid var(--border)', color: activeLabel === c.label ? 'var(--accent)' : 'var(--text)', fontWeight: activeLabel === c.label ? 600 : 400, background: activeLabel === c.label ? 'var(--accent-light)' : 'transparent' }}>
-                  {c.label}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {openMenu === 'europe' && <CountryDropdown countries={EUROPE_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'americas' && <CountryDropdown countries={AMERICAS_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'asia' && <CountryDropdown countries={ASIA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'africa' && <CountryDropdown countries={AFRICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
       </div>
 
       <div className="compose-bar">
@@ -311,17 +400,8 @@ export default function Feed() {
                 <button className="action-btn" onClick={() => toggleCmts(post.id)}>
                   💬 {openCmts[post.id] ? cmts.length : cntDisplay}
                 </button>
-                {!isOwn && (
-                  <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>
-                    ✉ Message
-                  </button>
-                )}
-                {!isOwn && (
-                  <button className="action-btn report"
-                    onClick={() => { setReportTarget({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>
-                    ⚑ Report
-                  </button>
-                )}
+                {!isOwn && <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>✉ Message</button>}
+                {!isOwn && <button className="action-btn report" onClick={() => { setReportTarget({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>⚑ Report</button>}
               </div>
               {openCmts[post.id] && (
                 <div className="comments-wrap">
@@ -364,13 +444,9 @@ export default function Feed() {
             </div>
             <div style={{ display:'flex', gap:8 }}>
               <button onClick={() => setReportTarget(null)}
-                style={{ flex:1, padding:10, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13 }}>
-                Cancel
-              </button>
+                style={{ flex:1, padding:10, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13 }}>Cancel</button>
               <button onClick={submitReport}
-                style={{ flex:1, padding:10, background:'var(--accent)', color:'white', border:'none', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600 }}>
-                Submit report
-              </button>
+                style={{ flex:1, padding:10, background:'var(--accent)', color:'white', border:'none', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600 }}>Submit</button>
             </div>
           </div>
         </div>
