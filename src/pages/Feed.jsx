@@ -1,3 +1,5 @@
+bash
+cat > /home/claude/lokali-project/src/pages/Feed.jsx << 'FEEDEOF'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase, createPost, fetchComments, addComment } from '../lib/supabase'
@@ -8,8 +10,112 @@ const DISTANCE_RADII = [
   { label: '25 km', km: 25 }, { label: '50 km', km: 50 }, { label: '100 km', km: 100 },
 ]
 
+const AFRICA_COUNTRIES = [
+  { label: '🌍 All Africa', bounds: { lat: [-35, 38], lng: [-18, 52] } },
+  { label: '🇩🇿 Algeria', bounds: { lat: [19, 37], lng: [-9, 12] } },
+  { label: '🇦🇴 Angola', bounds: { lat: [-18, -4], lng: [11, 25] } },
+  { label: '🇨🇲 Cameroon', bounds: { lat: [1, 13], lng: [8, 16] } },
+  { label: '🇨🇩 DR Congo', bounds: { lat: [-13, 5], lng: [12, 31] } },
+  { label: '🇪🇬 Egypt', bounds: { lat: [22, 32], lng: [24, 37] } },
+  { label: '🇪🇹 Ethiopia', bounds: { lat: [3, 15], lng: [33, 48] } },
+  { label: '🇬🇭 Ghana', bounds: { lat: [4, 11], lng: [-3, 1] } },
+  { label: '🇨🇮 Ivory Coast', bounds: { lat: [4, 11], lng: [-8, -2] } },
+  { label: '🇰🇪 Kenya', bounds: { lat: [-5, 5], lng: [33, 42] } },
+  { label: '🇲🇬 Madagascar', bounds: { lat: [-26, -12], lng: [43, 51] } },
+  { label: '🇲🇦 Morocco', bounds: { lat: [27, 36], lng: [-14, -1] } },
+  { label: '🇲🇿 Mozambique', bounds: { lat: [-27, -10], lng: [32, 41] } },
+  { label: '🇳🇬 Nigeria', bounds: { lat: [4, 14], lng: [2, 15] } },
+  { label: '🇸🇳 Senegal', bounds: { lat: [12, 16], lng: [-17, -11] } },
+  { label: '🇿🇦 South Africa', bounds: { lat: [-35, -22], lng: [16, 33] } },
+  { label: '🇸🇩 Sudan', bounds: { lat: [9, 23], lng: [21, 39] } },
+  { label: '🇹🇿 Tanzania', bounds: { lat: [-12, -1], lng: [29, 41] } },
+  { label: '🇹🇳 Tunisia', bounds: { lat: [30, 38], lng: [7, 12] } },
+  { label: '🇺🇬 Uganda', bounds: { lat: [-2, 4], lng: [29, 35] } },
+  { label: '🇿🇲 Zambia', bounds: { lat: [-18, -8], lng: [22, 34] } },
+  { label: '🇿🇼 Zimbabwe', bounds: { lat: [-22, -15], lng: [25, 33] } },
+]
+
+const NORTH_AMERICA_COUNTRIES = [
+  { label: '🌎 All North America', bounds: { lat: [7, 72], lng: [-168, -52] } },
+  { label: '🇨🇦 Canada', bounds: { lat: [42, 83], lng: [-141, -52] } },
+  { label: '🇨🇷 Costa Rica', bounds: { lat: [8, 11], lng: [-86, -82] } },
+  { label: '🇨🇺 Cuba', bounds: { lat: [19, 23], lng: [-85, -74] } },
+  { label: '🇩🇴 Dominican Rep.', bounds: { lat: [17, 20], lng: [-72, -68] } },
+  { label: '🇸🇻 El Salvador', bounds: { lat: [13, 14], lng: [-90, -87] } },
+  { label: '🇬🇹 Guatemala', bounds: { lat: [13, 18], lng: [-92, -88] } },
+  { label: '🇭🇳 Honduras', bounds: { lat: [13, 16], lng: [-89, -83] } },
+  { label: '🇯🇲 Jamaica', bounds: { lat: [17, 18], lng: [-78, -76] } },
+  { label: '🇲🇽 Mexico', bounds: { lat: [14, 33], lng: [-118, -86] } },
+  { label: '🇳🇮 Nicaragua', bounds: { lat: [10, 15], lng: [-88, -83] } },
+  { label: '🇵🇦 Panama', bounds: { lat: [7, 10], lng: [-83, -77] } },
+  { label: '🇵🇷 Puerto Rico', bounds: { lat: [17, 19], lng: [-68, -65] } },
+  { label: '🇺🇸 USA', bounds: { lat: [24, 50], lng: [-125, -66] } },
+]
+
+const SOUTH_AMERICA_COUNTRIES = [
+  { label: '🌎 All South America', bounds: { lat: [-56, 13], lng: [-82, -34] } },
+  { label: '🇦🇷 Argentina', bounds: { lat: [-55, -21], lng: [-73, -53] } },
+  { label: '🇧🇴 Bolivia', bounds: { lat: [-23, -9], lng: [-69, -57] } },
+  { label: '🇧🇷 Brazil', bounds: { lat: [-33, 5], lng: [-73, -35] } },
+  { label: '🇨🇱 Chile', bounds: { lat: [-56, -17], lng: [-75, -66] } },
+  { label: '🇨🇴 Colombia', bounds: { lat: [-4, 13], lng: [-79, -66] } },
+  { label: '🇪🇨 Ecuador', bounds: { lat: [-5, 2], lng: [-81, -75] } },
+  { label: '🇬🇾 Guyana', bounds: { lat: [1, 9], lng: [-61, -57] } },
+  { label: '🇵🇾 Paraguay', bounds: { lat: [-27, -19], lng: [-62, -54] } },
+  { label: '🇵🇪 Peru', bounds: { lat: [-18, -1], lng: [-81, -68] } },
+  { label: '🇸🇷 Suriname', bounds: { lat: [2, 6], lng: [-58, -54] } },
+  { label: '🇺🇾 Uruguay', bounds: { lat: [-35, -30], lng: [-58, -53] } },
+  { label: '🇻🇪 Venezuela', bounds: { lat: [0, 12], lng: [-73, -59] } },
+]
+
+const ASIA_COUNTRIES = [
+  { label: '🌏 All Asia', bounds: { lat: [-10, 77], lng: [26, 145] } },
+  { label: '🇦🇫 Afghanistan', bounds: { lat: [29, 39], lng: [60, 75] } },
+  { label: '🇧🇩 Bangladesh', bounds: { lat: [20, 27], lng: [88, 93] } },
+  { label: '🇨🇳 China', bounds: { lat: [18, 54], lng: [73, 135] } },
+  { label: '🇮🇳 India', bounds: { lat: [8, 37], lng: [68, 97] } },
+  { label: '🇮🇩 Indonesia', bounds: { lat: [-11, 6], lng: [95, 141] } },
+  { label: '🇮🇷 Iran', bounds: { lat: [25, 40], lng: [44, 64] } },
+  { label: '🇮🇶 Iraq', bounds: { lat: [29, 38], lng: [38, 49] } },
+  { label: '🇮🇱 Israel', bounds: { lat: [29, 33], lng: [34, 36] } },
+  { label: '🇯🇵 Japan', bounds: { lat: [24, 46], lng: [122, 146] } },
+  { label: '🇯🇴 Jordan', bounds: { lat: [29, 33], lng: [35, 39] } },
+  { label: '🇰🇿 Kazakhstan', bounds: { lat: [41, 56], lng: [51, 88] } },
+  { label: '🇰🇼 Kuwait', bounds: { lat: [28, 30], lng: [46, 49] } },
+  { label: '🇱🇧 Lebanon', bounds: { lat: [33, 34], lng: [35, 37] } },
+  { label: '🇲🇾 Malaysia', bounds: { lat: [1, 7], lng: [100, 119] } },
+  { label: '🇳🇵 Nepal', bounds: { lat: [26, 30], lng: [80, 88] } },
+  { label: '🇵🇰 Pakistan', bounds: { lat: [23, 37], lng: [60, 78] } },
+  { label: '🇵🇭 Philippines', bounds: { lat: [4, 21], lng: [116, 127] } },
+  { label: '🇸🇦 Saudi Arabia', bounds: { lat: [16, 32], lng: [36, 56] } },
+  { label: '🇸🇬 Singapore', bounds: { lat: [1.1, 1.5], lng: [103.6, 104.1] } },
+  { label: '🇰🇷 South Korea', bounds: { lat: [33, 39], lng: [124, 130] } },
+  { label: '🇱🇰 Sri Lanka', bounds: { lat: [5, 10], lng: [79, 82] } },
+  { label: '🇸🇾 Syria', bounds: { lat: [32, 37], lng: [35, 43] } },
+  { label: '🇹🇼 Taiwan', bounds: { lat: [21, 25], lng: [120, 122] } },
+  { label: '🇹🇭 Thailand', bounds: { lat: [5, 21], lng: [97, 106] } },
+  { label: '🇦🇪 UAE', bounds: { lat: [22, 26], lng: [51, 56] } },
+  { label: '🇺🇿 Uzbekistan', bounds: { lat: [37, 46], lng: [56, 74] } },
+  { label: '🇻🇳 Vietnam', bounds: { lat: [8, 23], lng: [102, 110] } },
+  { label: '🇾🇪 Yemen', bounds: { lat: [12, 19], lng: [42, 54] } },
+]
+
+const AUSTRALIA_COUNTRIES = [
+  { label: '🦘 All Australia & Oceania', bounds: { lat: [-50, -8], lng: [108, 180] } },
+  { label: '🇦🇺 Australia (all)', bounds: { lat: [-44, -10], lng: [113, 154] } },
+  { label: '🇦🇺 New South Wales', bounds: { lat: [-37.5, -28.2], lng: [140.9, 153.6] } },
+  { label: '🇦🇺 Queensland', bounds: { lat: [-29.2, -10.7], lng: [138.0, 153.6] } },
+  { label: '🇦🇺 South Australia', bounds: { lat: [-38.1, -26.0], lng: [129.0, 141.0] } },
+  { label: '🇦🇺 Tasmania', bounds: { lat: [-43.6, -39.6], lng: [144.6, 148.5] } },
+  { label: '🇦🇺 Victoria', bounds: { lat: [-39.2, -33.9], lng: [140.9, 150.0] } },
+  { label: '🇦🇺 Western Australia', bounds: { lat: [-35.1, -13.7], lng: [113.2, 129.0] } },
+  { label: '🇫🇯 Fiji', bounds: { lat: [-20, -15], lng: [177, 180] } },
+  { label: '🇳🇿 New Zealand', bounds: { lat: [-47, -34], lng: [166, 178] } },
+  { label: '🇵🇬 Papua New Guinea', bounds: { lat: [-12, -1], lng: [141, 156] } },
+]
+
 const EUROPE_COUNTRIES = [
-  { label: '🇪🇺 All Europe', bounds: { lat: [34, 72], lng: [-25, 45] } },
+  { label: '🌍 All Europe', bounds: { lat: [34, 72], lng: [-25, 45] } },
   { label: '🇦🇱 Albania', bounds: { lat: [39.6, 42.7], lng: [19.3, 21.1] } },
   { label: '🇦🇹 Austria', bounds: { lat: [46.4, 49.0], lng: [9.5, 17.2] } },
   { label: '🇧🇾 Belarus', bounds: { lat: [51.3, 56.2], lng: [23.2, 32.8] } },
@@ -52,85 +158,6 @@ const EUROPE_COUNTRIES = [
   { label: '🇹🇷 Turkey', bounds: { lat: [35.8, 42.1], lng: [26.0, 44.8] } },
   { label: '🇺🇦 Ukraine', bounds: { lat: [44.4, 52.4], lng: [22.1, 40.2] } },
   { label: '🇬🇧 UK', bounds: { lat: [49.9, 60.9], lng: [-8.2, 1.8] } },
-]
-
-const AMERICAS_COUNTRIES = [
-  { label: '🌎 All Americas', bounds: { lat: [-56, 72], lng: [-168, -34] } },
-  { label: '🇦🇷 Argentina', bounds: { lat: [-55, -21], lng: [-73, -53] } },
-  { label: '🇧🇴 Bolivia', bounds: { lat: [-23, -9], lng: [-69, -57] } },
-  { label: '🇧🇷 Brazil', bounds: { lat: [-33, 5], lng: [-73, -35] } },
-  { label: '🇨🇦 Canada', bounds: { lat: [42, 83], lng: [-141, -52] } },
-  { label: '🇨🇱 Chile', bounds: { lat: [-56, -17], lng: [-75, -66] } },
-  { label: '🇨🇴 Colombia', bounds: { lat: [-4, 13], lng: [-79, -66] } },
-  { label: '🇨🇷 Costa Rica', bounds: { lat: [8, 11], lng: [-86, -82] } },
-  { label: '🇨🇺 Cuba', bounds: { lat: [19, 23], lng: [-85, -74] } },
-  { label: '🇩🇴 Dominican Rep.', bounds: { lat: [17, 20], lng: [-72, -68] } },
-  { label: '🇪🇨 Ecuador', bounds: { lat: [-5, 2], lng: [-81, -75] } },
-  { label: '🇸🇻 El Salvador', bounds: { lat: [13, 14], lng: [-90, -87] } },
-  { label: '🇬🇹 Guatemala', bounds: { lat: [13, 18], lng: [-92, -88] } },
-  { label: '🇭🇳 Honduras', bounds: { lat: [13, 16], lng: [-89, -83] } },
-  { label: '🇲🇽 Mexico', bounds: { lat: [14, 33], lng: [-118, -86] } },
-  { label: '🇳🇮 Nicaragua', bounds: { lat: [10, 15], lng: [-88, -83] } },
-  { label: '🇵🇦 Panama', bounds: { lat: [7, 10], lng: [-83, -77] } },
-  { label: '🇵🇾 Paraguay', bounds: { lat: [-27, -19], lng: [-62, -54] } },
-  { label: '🇵🇪 Peru', bounds: { lat: [-18, -1], lng: [-81, -68] } },
-  { label: '🇵🇷 Puerto Rico', bounds: { lat: [17, 19], lng: [-68, -65] } },
-  { label: '🇺🇾 Uruguay', bounds: { lat: [-35, -30], lng: [-58, -53] } },
-  { label: '🇺🇸 USA', bounds: { lat: [24, 50], lng: [-125, -66] } },
-  { label: '🇻🇪 Venezuela', bounds: { lat: [0, 12], lng: [-73, -59] } },
-]
-
-const ASIA_COUNTRIES = [
-  { label: '🌏 All Asia & Pacific', bounds: { lat: [-50, 77], lng: [26, 180] } },
-  { label: '🇦🇺 Australia', bounds: { lat: [-44, -10], lng: [113, 154] } },
-  { label: '🇧🇩 Bangladesh', bounds: { lat: [20, 27], lng: [88, 93] } },
-  { label: '🇨🇳 China', bounds: { lat: [18, 54], lng: [73, 135] } },
-  { label: '🇫🇯 Fiji', bounds: { lat: [-20, -15], lng: [177, 180] } },
-  { label: '🇮🇳 India', bounds: { lat: [8, 37], lng: [68, 97] } },
-  { label: '🇮🇩 Indonesia', bounds: { lat: [-11, 6], lng: [95, 141] } },
-  { label: '🇮🇷 Iran', bounds: { lat: [25, 40], lng: [44, 64] } },
-  { label: '🇮🇶 Iraq', bounds: { lat: [29, 38], lng: [38, 49] } },
-  { label: '🇮🇱 Israel', bounds: { lat: [29, 33], lng: [34, 36] } },
-  { label: '🇯🇵 Japan', bounds: { lat: [24, 46], lng: [122, 146] } },
-  { label: '🇯🇴 Jordan', bounds: { lat: [29, 33], lng: [35, 39] } },
-  { label: '🇰🇿 Kazakhstan', bounds: { lat: [41, 56], lng: [51, 88] } },
-  { label: '🇰🇷 South Korea', bounds: { lat: [33, 39], lng: [124, 130] } },
-  { label: '🇰🇼 Kuwait', bounds: { lat: [28, 30], lng: [46, 49] } },
-  { label: '🇱🇧 Lebanon', bounds: { lat: [33, 34], lng: [35, 37] } },
-  { label: '🇲🇾 Malaysia', bounds: { lat: [1, 7], lng: [100, 119] } },
-  { label: '🇳🇵 Nepal', bounds: { lat: [26, 30], lng: [80, 88] } },
-  { label: '🇳🇿 New Zealand', bounds: { lat: [-47, -34], lng: [166, 178] } },
-  { label: '🇵🇰 Pakistan', bounds: { lat: [23, 37], lng: [60, 78] } },
-  { label: '🇵🇭 Philippines', bounds: { lat: [4, 21], lng: [116, 127] } },
-  { label: '🇸🇦 Saudi Arabia', bounds: { lat: [16, 32], lng: [36, 56] } },
-  { label: '🇸🇬 Singapore', bounds: { lat: [1.1, 1.5], lng: [103.6, 104.1] } },
-  { label: '🇱🇰 Sri Lanka', bounds: { lat: [5, 10], lng: [79, 82] } },
-  { label: '🇹🇼 Taiwan', bounds: { lat: [21, 25], lng: [120, 122] } },
-  { label: '🇹🇭 Thailand', bounds: { lat: [5, 21], lng: [97, 106] } },
-  { label: '🇦🇪 UAE', bounds: { lat: [22, 26], lng: [51, 56] } },
-  { label: '🇻🇳 Vietnam', bounds: { lat: [8, 23], lng: [102, 110] } },
-]
-
-const AFRICA_COUNTRIES = [
-  { label: '🌍 All Africa', bounds: { lat: [-35, 38], lng: [-18, 52] } },
-  { label: '🇩🇿 Algeria', bounds: { lat: [19, 37], lng: [-9, 12] } },
-  { label: '🇦🇴 Angola', bounds: { lat: [-18, -4], lng: [11, 25] } },
-  { label: '🇨🇲 Cameroon', bounds: { lat: [1, 13], lng: [8, 16] } },
-  { label: '🇪🇬 Egypt', bounds: { lat: [22, 32], lng: [24, 37] } },
-  { label: '🇪🇹 Ethiopia', bounds: { lat: [3, 15], lng: [33, 48] } },
-  { label: '🇬🇭 Ghana', bounds: { lat: [4, 11], lng: [-3, 1] } },
-  { label: '🇰🇪 Kenya', bounds: { lat: [-5, 5], lng: [33, 42] } },
-  { label: '🇲🇦 Morocco', bounds: { lat: [27, 36], lng: [-14, -1] } },
-  { label: '🇲🇿 Mozambique', bounds: { lat: [-27, -10], lng: [32, 41] } },
-  { label: '🇳🇬 Nigeria', bounds: { lat: [4, 14], lng: [2, 15] } },
-  { label: '🇸🇳 Senegal', bounds: { lat: [12, 16], lng: [-17, -11] } },
-  { label: '🇿🇦 South Africa', bounds: { lat: [-35, -22], lng: [16, 33] } },
-  { label: '🇸🇩 Sudan', bounds: { lat: [9, 23], lng: [21, 39] } },
-  { label: '🇹🇿 Tanzania', bounds: { lat: [-12, -1], lng: [29, 41] } },
-  { label: '🇹🇳 Tunisia', bounds: { lat: [30, 38], lng: [7, 12] } },
-  { label: '🇺🇬 Uganda', bounds: { lat: [-2, 4], lng: [29, 35] } },
-  { label: '🇿🇲 Zambia', bounds: { lat: [-18, -8], lng: [22, 34] } },
-  { label: '🇿🇼 Zimbabwe', bounds: { lat: [-22, -15], lng: [25, 33] } },
 ]
 
 const EMOJIS = ['😊','😂','❤️','🔥','👍','🙌','😍','🤔','😅','🥰','😭','🎉','✨','💪','🙏','😎','🤩','😇','🥳','😴','🤗','💚','🌳','🐨','🦊','🐸','🦋','🦔','🐧','🦦','🐙']
@@ -190,7 +217,7 @@ export default function Feed() {
   const [cmtText, setCmtText] = useState({})
   const [toast, setToast] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
-  const [openMenu, setOpenMenu] = useState(null) // 'europe'|'americas'|'asia'|'africa'
+  const [openMenu, setOpenMenu] = useState(null)
   const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
 
@@ -206,7 +233,7 @@ export default function Feed() {
   useEffect(() => {
     if (!loc) return
     load()
-    const ch = supabase.channel('posts-feed-v5')
+    const ch = supabase.channel('posts-feed-v6')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, load)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, load)
       .subscribe()
@@ -269,8 +296,7 @@ export default function Feed() {
     try {
       await createPost(user.id, text.trim(),
         loc?.lat !== 0 ? loc?.lat : null,
-        loc?.lng !== 0 ? loc?.lng : null
-      )
+        loc?.lng !== 0 ? loc?.lng : null)
       setText(''); showToast('Post published! ✓'); load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }
@@ -335,9 +361,11 @@ export default function Feed() {
                 onClick={() => selectDistance(r)}>{r.label}</div>
             ))}
             {menuBtn('🌍 Africa', 'africa', AFRICA_COUNTRIES)}
-            {menuBtn('🌎 Americas', 'americas', AMERICAS_COUNTRIES)}
-            {menuBtn('🌏 Asia & Pacific', 'asia', ASIA_COUNTRIES)}
-            {menuBtn('🇪🇺 Europe', 'europe', EUROPE_COUNTRIES)}
+            {menuBtn('🌎 North America', 'northamerica', NORTH_AMERICA_COUNTRIES)}
+            {menuBtn('🌏 Asia', 'asia', ASIA_COUNTRIES)}
+            {menuBtn('🦘 Australia & Oceania', 'australia', AUSTRALIA_COUNTRIES)}
+            {menuBtn('🌍 Europe', 'europe', EUROPE_COUNTRIES)}
+            {menuBtn('🌎 South America', 'southamerica', SOUTH_AMERICA_COUNTRIES)}
             <div className={`radius-chip ${activeLabel === '🌍 Global' ? 'active' : ''}`}
               onClick={selectGlobal}>🌍 Global</div>
           </div>
@@ -345,10 +373,12 @@ export default function Feed() {
             style={{ position:'absolute', right:0, zIndex:5, background:'linear-gradient(to left, var(--bg) 60%, transparent)', border:'none', cursor:'pointer', fontSize:18, padding:'12px 8px', color:'var(--text2)' }}>›</button>
         </div>
 
-        {openMenu === 'europe' && <CountryDropdown countries={EUROPE_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
-        {openMenu === 'americas' && <CountryDropdown countries={AMERICAS_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
-        {openMenu === 'asia' && <CountryDropdown countries={ASIA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
         {openMenu === 'africa' && <CountryDropdown countries={AFRICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'northamerica' && <CountryDropdown countries={NORTH_AMERICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'asia' && <CountryDropdown countries={ASIA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'australia' && <CountryDropdown countries={AUSTRALIA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'europe' && <CountryDropdown countries={EUROPE_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+        {openMenu === 'southamerica' && <CountryDropdown countries={SOUTH_AMERICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
       </div>
 
       <div className="compose-bar">
@@ -456,3 +486,10 @@ export default function Feed() {
     </>
   )
 }
+FEEDEOF
+cp /home/claude/lokali-project/src/pages/Feed.jsx /mnt/user-data/outputs/Feed.jsx
+echo "done"
+
+Ausgabe
+done
+
