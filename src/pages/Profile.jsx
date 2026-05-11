@@ -30,6 +30,9 @@ export default function Profile() {
   const [gender, setGender] = useState('')
   const [identities, setIdentities] = useState([])
   const [visibility, setVisibility] = useState({ age: true, gender: true, identities: true })
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteInput, setDeleteInput] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [toast, setToast] = useState('')
@@ -57,6 +60,21 @@ export default function Profile() {
       setProfile(p); setEditingAvatar(false); showToast('Avatar updated! 🐾')
     } catch (e) { showToast(e.message) }
     finally { setSaving(false) }
+  }
+
+  async function deleteAccount() {
+    if (deleteInput !== profile?.username) { setMsg('Username does not match'); return }
+    setDeleting(true)
+    try {
+      // Delete profile – cascade deletes posts, comments, messages, reports
+      await supabase.from('profiles').delete().eq('id', user.id)
+      // Sign out (Supabase will clean up auth user via cascade eventually)
+      await signOut()
+    } catch (e) {
+      console.error(e)
+      // Still sign out even if delete fails
+      await signOut()
+    }
   }
 
   async function saveUsername() {
@@ -231,10 +249,38 @@ export default function Profile() {
         <button onClick={() => navigate('/legal')} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid var(--border)', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'var(--text3)', cursor:'pointer', marginBottom:10 }}>
           🔒 Privacy Policy & Impressum
         </button>
-        <button onClick={signOut} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid var(--border)', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'var(--text3)', cursor:'pointer' }}>
+        <button onClick={signOut} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid var(--border)', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'var(--text3)', cursor:'pointer', marginBottom:10 }}>
           Sign out
         </button>
+        <button onClick={() => setShowDeleteConfirm(true)} style={{ width:'100%', padding:12, background:'transparent', border:'0.5px solid #ffcccc', borderRadius:12, fontFamily:'inherit', fontSize:14, color:'#cc3333', cursor:'pointer' }}>
+          🗑 Delete account
+        </button>
       </div>
+
+      {showDeleteConfirm && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div style={{ background:'var(--bg)', borderRadius:16, padding:24, maxWidth:360, width:'100%' }}>
+            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:'#cc3333' }}>⚠️ Delete account</div>
+            <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:16 }}>
+              This will permanently delete your account, all your posts, comments and messages. This cannot be undone.<br /><br />
+              Type your username <strong>{profile?.username}</strong> to confirm:
+            </p>
+            <input style={{ width:'100%', padding:'10px 14px', borderRadius:10, border:'0.5px solid #ffcccc', fontFamily:'inherit', fontSize:14, background:'var(--bg2)', color:'var(--text)', outline:'none', marginBottom:8 }}
+              placeholder={profile?.username} value={deleteInput} onChange={e => setDeleteInput(e.target.value)} />
+            {msg && <div style={{ fontSize:12, color:'#cc3333', marginBottom:8 }}>{msg}</div>}
+            <div style={{ display:'flex', gap:8 }}>
+              <button onClick={() => { setShowDeleteConfirm(false); setDeleteInput(''); setMsg('') }}
+                style={{ flex:1, padding:10, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13 }}>
+                Cancel
+              </button>
+              <button onClick={deleteAccount} disabled={deleting}
+                style={{ flex:1, padding:10, background:'#cc3333', color:'white', border:'none', borderRadius:10, cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600 }}>
+                {deleting ? '...' : 'Delete permanently'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
     </>
   )

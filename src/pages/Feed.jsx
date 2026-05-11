@@ -334,10 +334,10 @@ export default function Feed() {
               <div key={r.km} className={`radius-chip ${activeLabel === r.label ? 'active' : ''}`}
                 onClick={() => selectDistance(r)}>{r.label}</div>
             ))}
-            {menuBtn('🇪🇺 Europe', 'europe', EUROPE_COUNTRIES)}
+            {menuBtn('🌍 Africa', 'africa', AFRICA_COUNTRIES)}
             {menuBtn('🌎 Americas', 'americas', AMERICAS_COUNTRIES)}
             {menuBtn('🌏 Asia & Pacific', 'asia', ASIA_COUNTRIES)}
-            {menuBtn('🌍 Africa', 'africa', AFRICA_COUNTRIES)}
+            {menuBtn('🇪🇺 Europe', 'europe', EUROPE_COUNTRIES)}
             <div className={`radius-chip ${activeLabel === '🌍 Global' ? 'active' : ''}`}
               onClick={selectGlobal}>🌍 Global</div>
           </div>
