@@ -54,29 +54,50 @@ const EUROPE_COUNTRIES = [
   { label: '🇬🇧 UK', bounds: { lat: [49.9, 60.9], lng: [-8.2, 1.8] } },
 ]
 
-const AMERICAS_COUNTRIES = [
-  { label: '🌎 All Americas', bounds: { lat: [-56, 72], lng: [-168, -34] } },
-  { label: '🇦🇷 Argentina', bounds: { lat: [-55, -21], lng: [-73, -53] } },
-  { label: '🇧🇴 Bolivia', bounds: { lat: [-23, -9], lng: [-69, -57] } },
-  { label: '🇧🇷 Brazil', bounds: { lat: [-33, 5], lng: [-73, -35] } },
+const AUSTRALIA_COUNTRIES = [
+  { label: '🦘 All Australia & Oceania', bounds: { lat: [-50, -8], lng: [108, 180] } },
+  { label: '🇦🇺 Australia (all)', bounds: { lat: [-44, -10], lng: [113, 154] } },
+  { label: '🇦🇺 New South Wales', bounds: { lat: [-37.5, -28.2], lng: [140.9, 153.6] } },
+  { label: '🇦🇺 Queensland', bounds: { lat: [-29.2, -10.7], lng: [138.0, 153.6] } },
+  { label: '🇦🇺 South Australia', bounds: { lat: [-38.1, -26.0], lng: [129.0, 141.0] } },
+  { label: '🇦🇺 Tasmania', bounds: { lat: [-43.6, -39.6], lng: [144.6, 148.5] } },
+  { label: '🇦🇺 Victoria', bounds: { lat: [-39.2, -33.9], lng: [140.9, 150.0] } },
+  { label: '🇦🇺 Western Australia', bounds: { lat: [-35.1, -13.7], lng: [113.2, 129.0] } },
+  { label: '🇳🇿 New Zealand', bounds: { lat: [-47, -34], lng: [166, 178] } },
+  { label: '🇫🇯 Fiji', bounds: { lat: [-20, -15], lng: [177, 180] } },
+  { label: '🇵🇬 Papua New Guinea', bounds: { lat: [-12, -1], lng: [141, 156] } },
+]
+
+const NORTH_AMERICA_COUNTRIES = [
+  { label: '🌎 All North America', bounds: { lat: [7, 72], lng: [-168, -52] } },
   { label: '🇨🇦 Canada', bounds: { lat: [42, 83], lng: [-141, -52] } },
-  { label: '🇨🇱 Chile', bounds: { lat: [-56, -17], lng: [-75, -66] } },
-  { label: '🇨🇴 Colombia', bounds: { lat: [-4, 13], lng: [-79, -66] } },
   { label: '🇨🇷 Costa Rica', bounds: { lat: [8, 11], lng: [-86, -82] } },
   { label: '🇨🇺 Cuba', bounds: { lat: [19, 23], lng: [-85, -74] } },
   { label: '🇩🇴 Dominican Rep.', bounds: { lat: [17, 20], lng: [-72, -68] } },
-  { label: '🇪🇨 Ecuador', bounds: { lat: [-5, 2], lng: [-81, -75] } },
   { label: '🇸🇻 El Salvador', bounds: { lat: [13, 14], lng: [-90, -87] } },
   { label: '🇬🇹 Guatemala', bounds: { lat: [13, 18], lng: [-92, -88] } },
   { label: '🇭🇳 Honduras', bounds: { lat: [13, 16], lng: [-89, -83] } },
+  { label: '🇯🇲 Jamaica', bounds: { lat: [17, 18], lng: [-78, -76] } },
   { label: '🇲🇽 Mexico', bounds: { lat: [14, 33], lng: [-118, -86] } },
   { label: '🇳🇮 Nicaragua', bounds: { lat: [10, 15], lng: [-88, -83] } },
   { label: '🇵🇦 Panama', bounds: { lat: [7, 10], lng: [-83, -77] } },
+  { label: '🇵🇷 Puerto Rico', bounds: { lat: [17, 19], lng: [-68, -65] } },
+  { label: '🇺🇸 USA', bounds: { lat: [24, 50], lng: [-125, -66] } },
+]
+
+const SOUTH_AMERICA_COUNTRIES = [
+  { label: '🌎 All South America', bounds: { lat: [-56, 13], lng: [-82, -34] } },
+  { label: '🇦🇷 Argentina', bounds: { lat: [-55, -21], lng: [-73, -53] } },
+  { label: '🇧🇴 Bolivia', bounds: { lat: [-23, -9], lng: [-69, -57] } },
+  { label: '🇧🇷 Brazil', bounds: { lat: [-33, 5], lng: [-73, -35] } },
+  { label: '🇨🇱 Chile', bounds: { lat: [-56, -17], lng: [-75, -66] } },
+  { label: '🇨🇴 Colombia', bounds: { lat: [-4, 13], lng: [-79, -66] } },
+  { label: '🇪🇨 Ecuador', bounds: { lat: [-5, 2], lng: [-81, -75] } },
+  { label: '🇬🇾 Guyana', bounds: { lat: [1, 9], lng: [-61, -57] } },
   { label: '🇵🇾 Paraguay', bounds: { lat: [-27, -19], lng: [-62, -54] } },
   { label: '🇵🇪 Peru', bounds: { lat: [-18, -1], lng: [-81, -68] } },
-  { label: '🇵🇷 Puerto Rico', bounds: { lat: [17, 19], lng: [-68, -65] } },
+  { label: '🇸🇷 Suriname', bounds: { lat: [2, 6], lng: [-58, -54] } },
   { label: '🇺🇾 Uruguay', bounds: { lat: [-35, -30], lng: [-58, -53] } },
-  { label: '🇺🇸 USA', bounds: { lat: [24, 50], lng: [-125, -66] } },
   { label: '🇻🇪 Venezuela', bounds: { lat: [0, 12], lng: [-73, -59] } },
 ]
 
