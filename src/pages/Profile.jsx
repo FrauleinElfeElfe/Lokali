@@ -66,14 +66,14 @@ export default function Profile() {
     if (deleteInput !== profile?.username) { setMsg('Username does not match'); return }
     setDeleting(true)
     try {
-      // Delete profile – cascade deletes posts, comments, messages, reports
-      await supabase.from('profiles').delete().eq('id', user.id)
-      // Sign out (Supabase will clean up auth user via cascade eventually)
+      // Call server-side function that deletes both profile and auth user
+      const { error } = await supabase.rpc('delete_user_account', { user_id: user.id })
+      if (error) throw error
       await signOut()
     } catch (e) {
       console.error(e)
-      // Still sign out even if delete fails
-      await signOut()
+      setMsg('Error deleting account: ' + e.message)
+      setDeleting(false)
     }
   }
 
@@ -150,7 +150,7 @@ export default function Profile() {
         <div style={{ fontSize:13, color:'var(--text3)', marginTop:4 }}>
           {profile?.visibility?.age !== false && profile?.age && profile.age !== 'Prefer not to say' && `${profile.age} · `}
           {profile?.visibility?.gender !== false && profile?.gender && `${profile.gender} · `}
-          Member since today
+          Member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'today'}
         </div>
 
         {profile?.visibility?.identities !== false && profile?.identities?.length > 0 && (

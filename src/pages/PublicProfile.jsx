@@ -48,7 +48,7 @@ export default function PublicProfile() {
         <div style={{ fontSize:13, color:'var(--text3)', marginTop:4 }}>
           {profile.visibility?.age !== false && profile.age && profile.age !== 'Prefer not to say' && `${profile.age} · `}
           {profile.visibility?.gender !== false && profile.gender && `${profile.gender} · `}
-          lokali member
+          lokali member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : ''}
         </div>
 
         {profile.visibility?.identities !== false && profile.identities?.length > 0 && (
