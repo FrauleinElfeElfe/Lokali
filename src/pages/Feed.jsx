@@ -484,10 +484,3 @@ export default function Feed() {
     </>
   )
 }
-FEEDEOF
-cp /home/claude/lokali-project/src/pages/Feed.jsx /mnt/user-data/outputs/Feed.jsx
-echo "done"
-
-Ausgabe
-done
-
