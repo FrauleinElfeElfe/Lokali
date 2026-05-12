@@ -119,10 +119,10 @@ export default function Login() {
           <br /><br />
           <strong>2. Toxicity.</strong><br />
           To reduce toxicity lokali is: <br />
-	  	<li style = "list-style-type: lower-alpha;">strictly moderated <br /> </li>
-	  	<li style = "list-style-type: lower-alpha;">only available when you have the link <br />
+	  	<li>strictly moderated <br /> </li>
+	  	<li>only available when you have the link <br />
 		(given from friends to friends/ mooties to mooties)<br /></li>
-	  	<li style = "list-style-type: lower-alpha;">only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳</li>
+	  	<li>only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳</li>
         </p>
       </div>
 
