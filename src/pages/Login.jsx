@@ -106,7 +106,7 @@ export default function Login() {
           <strong>What makes lokali different?</strong>
           <br /><br />
 	</p>
-	<p style={{ fontFamily: 'Caveat, cursive', fontSize: 16, color: 'var(--accent)', lineHeight: 1.7 }}>
+	<p style={{ fontFamily: 'Caveat, cursive', fontSize: 24, color: 'var(--accent)', lineHeight: 1.7 }}>
           <strong> The problem with most apps:</strong><br />
 	</p>
 	<p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
