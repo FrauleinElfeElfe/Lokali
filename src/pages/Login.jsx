@@ -105,7 +105,11 @@ export default function Login() {
           <br /><br />
           <strong>What makes lokali different?</strong>
           <br /><br />
+	</p>
+	<p style={{ fontFamily: 'Caveat, cursive', fontSize: 16, color: 'var(--accent)', lineHeight: 1.7 }}>
           <strong> The problem with most apps:</strong><br />
+	</p>
+	<p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
           <strong> 1. Intention (friendship/relationship) → Decisions over people (swiping) → Getting to know each other </strong>
           <br /><br />
           But it should be the other way around:<br />
