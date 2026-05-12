@@ -119,10 +119,10 @@ export default function Login() {
           <br /><br />
           <strong>2. Toxicity.</strong><br />
           To reduce toxicity lokali is: <br />
-	  	<ul><li>strictly moderated <br /> </li>
-	  	<li>only available when you have the link <br />
-		(given from friends to friends/ mooties to mooties)<br /></li>
-	  	<li>only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳</li><ul></ul></ul>
+	  	<ul><li>strictly moderated <br /> </li></ul>
+	  	<ul><li>only available when you have the link <br />
+		(given from friends to friends/ mooties to mooties)<br /></li></ul>
+	  	<ul><li>only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳</li></ul>
         </p>
       </div>
 
