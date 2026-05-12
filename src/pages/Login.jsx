@@ -117,7 +117,7 @@ export default function Login() {
           <br /><br />
           Many people today struggle with real-life interaction. lokali helps you build online connections with people nearby, so taking things offline is actually possible.
           <br /><br />
-          <strong>2. Reducing toxicity.</strong><br />
+          <strong>2. Toxicity.</strong><br />
           To reduce toxicity lokali is only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
         </p>
       </div>
