@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 export default function Legal() {
   const navigate = useNavigate()
   const email = 'wriedtsarah@googlemail.com'
-  const name = 'Sarah Wriedt' // <- deinen echten Namen eintragen!
-  const address = 'Mühlenweg 112, 24116 Kiel, Deutschland' // <- deine Adresse eintragen!
+  const name = 'Sarah Wriedt'
+  const address = 'Mühlenweg 112, 24116 Kiel, Deutschland'
 
   return (
     <div style={{ padding: '0 0 80px' }}>
@@ -15,9 +15,9 @@ export default function Legal() {
 
       <div style={{ padding: '0 20px' }}>
 
-        {/* IMPRESSUM */}
+        {/* LEGAL NOTICE */}
         <div style={{ marginTop: 28, marginBottom: 32 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>Impressum</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>Legal Notice</h2>
           <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text2)' }}>
             <strong>{name}</strong><br />
             {address}<br />
@@ -30,7 +30,7 @@ export default function Legal() {
 
         <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', marginBottom: 28 }} />
 
-        {/* DATENSCHUTZ */}
+        {/* PRIVACY POLICY */}
         <div style={{ marginBottom: 32 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>Privacy Policy</h2>
 

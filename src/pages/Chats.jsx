@@ -27,16 +27,16 @@ export default function Chats() {
     setConvos([...seen.values()])
   }
 
-  if (convos.length === 0) return <div className="empty-state">Noch keine Chats.<br />Schreib jemanden im Feed an! ✉️</div>
+  if (convos.length === 0) return <div className="empty-state">No messages yet.<br />Reach out to someone in the feed! ✉️</div>
 
   return (
     <>
-      <div className="section-label">Nachrichten</div>
+      <div className="section-label">Messages</div>
       {convos.map(c => (
         <div className="chat-item" key={c.id} onClick={() => navigate(`/chats/${c.id}`)}>
           <div className="avatar">{c.profile?.avatar || '🐾'}</div>
           <div style={{ flex: 1 }}>
-            <div className="chat-name">{c.profile?.username || 'Unbekannt'}</div>
+            <div className="chat-name">{c.profile?.username || 'Unknown'}</div>
             <div className="chat-preview">{c.last.text?.substring(0, 50)}</div>
           </div>
         </div>
