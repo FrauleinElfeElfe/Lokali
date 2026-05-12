@@ -113,12 +113,15 @@ export default function Login() {
           <strong> 1. Intention (friendship/relationship) → Decisions over people (swiping) → Getting to know each other </strong>
           <br /><br />
           But it should be the other way around:<br />
-          Getting to know each other → Decisions → Intention for friendship or relationship
+          <em> Getting to know each other → Decisions → Intention for friendship or relationship </em>
           <br /><br />
           Many people today struggle with real-life interaction. lokali helps you build online connections with people nearby, so taking things offline is actually possible.
           <br /><br />
           <strong>2. Toxicity.</strong><br />
-          To reduce toxicity lokali is only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
+          To reduce toxicity lokali is: <br />
+	  - strictly moderated <br />
+	  - only available when you have the link (given from friends to friends/ mooties to mooties)<br />
+	  - only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
         </p>
       </div>
 
