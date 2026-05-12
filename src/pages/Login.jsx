@@ -101,20 +101,20 @@ export default function Login() {
         <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
           <strong>Find your online besties nearby 💬✨</strong>
           <br /><br />
-          Spontaneous conversations — no swiping, no rankings. Simply two people who happened to be in the same place, starting a conversation.
+          No swiping, no rankings. Simply people who happened to be there at the same time.
           <br /><br />
           <strong>What makes lokali different?</strong>
           <br /><br />
-          <strong>1. The problem with most apps:</strong><br />
-          Intention → Decision (swiping) → Getting to know each other
+          <strong> The problem with most apps:</strong><br />
+          <strong> 1. Intention (friendship/relationship) → Decisions over people (swiping) → Getting to know each other </strong>
           <br /><br />
           But it should be the other way around:<br />
-          Getting to know each other → Deciding whether you like them → Building a friendship or relationship
+          Getting to know each other → Decisions → Intention for friendship or relationship
           <br /><br />
-          Many people today struggle with real-life interaction. lokali helps you build connections with people nearby — close enough that taking things offline is actually possible.
+          Many people today struggle with real-life interaction. lokali helps you build online connections with people nearby, so taking things offline is actually possible.
           <br /><br />
           <strong>2. Reducing toxicity.</strong><br />
-          lokali is only partially anonymous – yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
+          To reduce toxicity lokali is only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
         </p>
       </div>
 
