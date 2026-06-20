@@ -302,7 +302,7 @@ export default function Feed() {
       await createPost(user.id, text.trim(),
         loc?.lat !== 0 ? loc?.lat : null,
         loc?.lng !== 0 ? loc?.lng : null)
-      await supabase.rpc('grant_post_credit', { p_user_id: user.id }).catch(() => {})
+      try { await supabase.rpc('grant_post_credit', { p_user_id: user.id }) } catch {}
       setText(''); showToast('Post published! ✓'); load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }

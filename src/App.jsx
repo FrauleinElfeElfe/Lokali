@@ -19,7 +19,9 @@ function AppRoutes() {
 
   useEffect(() => {
     if (user) {
-      supabase.rpc('grant_login_credit', { p_user_id: user.id }).catch(() => {})
+      supabase.rpc('grant_login_credit', { p_user_id: user.id })
+        .then(() => {})
+        .catch(() => {})
     }
   }, [user])
 
