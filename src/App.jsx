@@ -8,11 +8,21 @@ import ChatDetail from './pages/ChatDetail'
 import Profile from './pages/Profile'
 import PublicProfile from './pages/PublicProfile'
 import Legal from './pages/Legal'
+import Canvas from './pages/Canvas'
 import Layout from './components/Layout'
+import { useEffect } from 'react'
+import { supabase } from './lib/supabase'
 import './index.css'
 
 function AppRoutes() {
   const { user, profile, loading } = useAuth()
+
+  useEffect(() => {
+    if (user) {
+      supabase.rpc('grant_login_credit', { p_user_id: user.id }).catch(() => {})
+    }
+  }, [user])
+
   if (loading) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',fontSize:40}}>🌳</div>
   if (!user) return <Login />
   if (!profile?.username) return <Onboarding />
@@ -25,6 +35,7 @@ function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
         <Route path="/legal" element={<Legal />} />
+        <Route path="/canvas" element={<Canvas />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Layout>

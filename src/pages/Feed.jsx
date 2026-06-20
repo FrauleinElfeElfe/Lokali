@@ -302,6 +302,7 @@ export default function Feed() {
       await createPost(user.id, text.trim(),
         loc?.lat !== 0 ? loc?.lat : null,
         loc?.lng !== 0 ? loc?.lng : null)
+      await supabase.rpc('grant_post_credit', { p_user_id: user.id }).catch(() => {})
       setText(''); showToast('Post published! ✓'); load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }
@@ -359,6 +360,11 @@ export default function Feed() {
       <div style={{ padding:'10px 20px', borderBottom:'0.5px solid var(--border)' }}>
         <img src={AD_BANNERS[adIndex]} alt="Advertisement" style={{ width:'100%', borderRadius:12, display:'block' }} />
         <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
+      </div>
+
+      <div onClick={() => navigate('/canvas')} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'10px 20px', borderBottom:'0.5px solid var(--border)', cursor:'pointer', background:'var(--accent-light)' }}>
+        <span style={{ fontSize:16 }}>🎨</span>
+        <span style={{ fontSize:13, fontWeight:600, color:'var(--accent)' }}>Paint on the Community Canvas</span>
       </div>
 
       <div style={{ position:'relative' }}>
