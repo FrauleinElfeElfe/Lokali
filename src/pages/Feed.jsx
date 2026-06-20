@@ -170,6 +170,8 @@ const REPORT_REASONS = [
   'Other',
 ]
 
+const AD_BANNERS = ['/ad-banner-1.jpg']
+
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
   if (d < 60) return 'just now'
@@ -218,8 +220,13 @@ export default function Feed() {
   const [openMenu, setOpenMenu] = useState(null)
   const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
+  const [adIndex, setAdIndex] = useState(0)
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
+
+  useEffect(() => {
+    setAdIndex(Math.floor(Math.random() * AD_BANNERS.length))
+  }, [])
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(
@@ -231,7 +238,7 @@ export default function Feed() {
   useEffect(() => {
     if (!loc) return
     load()
-    const ch = supabase.channel('posts-feed-v6')
+    const ch = supabase.channel('posts-feed-v7')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, load)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, load)
       .subscribe()
@@ -347,6 +354,11 @@ export default function Feed() {
       )}
       <div style={{ padding:'6px 20px 2px', fontSize:11, color:'var(--text3)', fontStyle:'italic', textAlign:'center' }}>
         from online back to real life 🌳
+      </div>
+
+      <div style={{ padding:'10px 20px', borderBottom:'0.5px solid var(--border)' }}>
+        <img src={AD_BANNERS[adIndex]} alt="Advertisement" style={{ width:'100%', borderRadius:12, display:'block' }} />
+        <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
       </div>
 
       <div style={{ position:'relative' }}>
