@@ -64,14 +64,29 @@ export default function Canvas() {
   const [editingPixelId, setEditingPixelId] = useState(null) // sealed-pixel edit mode (existing own pixel)
   const [submitting, setSubmitting] = useState(false)
   const [favorites, setFavorites] = useState([])
+  const [activePixelPool, setActivePixelPool] = useState(0)
+  const [poolThreshold, setPoolThreshold] = useState(0)
 
-  function addFavorite() {
+  useEffect(() => {
+    loadFavorites()
+  }, [])
+
+  async function loadFavorites() {
+    const { data } = await supabase.from('profiles').select('favorite_colors').eq('id', user.id).maybeSingle()
+    setFavorites(data?.favorite_colors || [])
+  }
+
+  async function addFavorite() {
     if (favorites.includes(pickerColor)) return
     if (favorites.length >= 20) { showToast('Max 20 favorites – remove one first.'); return }
-    setFavorites(prev => [...prev, pickerColor])
+    const next = [...favorites, pickerColor]
+    setFavorites(next)
+    await supabase.from('profiles').update({ favorite_colors: next }).eq('id', user.id)
   }
-  function removeFavorite(c) {
-    setFavorites(prev => prev.filter(f => f !== c))
+  async function removeFavorite(c) {
+    const next = favorites.filter(f => f !== c)
+    setFavorites(next)
+    await supabase.from('profiles').update({ favorite_colors: next }).eq('id', user.id)
   }
 
   function setPickerColor(hex) {
@@ -106,7 +121,14 @@ export default function Canvas() {
     await loadCredits()
     await loadCurrentCanvas()
     await loadArchive()
+    await loadActivePool()
     setLoading(false)
+  }
+
+  async function loadActivePool() {
+    const { data } = await supabase.from('pixel_credits').select('credits')
+    const total = (data || []).reduce((sum, row) => sum + (row.credits || 0), 0)
+    setActivePixelPool(total)
   }
 
   async function loadCredits() {
@@ -120,6 +142,7 @@ export default function Canvas() {
     if (cv) {
       const { data: px } = await supabase.from('canvas_pixels').select('*').eq('canvas_id', cv.id)
       setPixels(px || [])
+      setPoolThreshold(Math.ceil(cv.width * cv.height * 0.3))
     }
   }
 
@@ -142,6 +165,10 @@ export default function Canvas() {
   }
 
   function handleCellClick(x, y) {
+    if (pixels.length === 0 && activePixelPool < poolThreshold) {
+      showToast('This canvas is still warming up – check back once enough pixels are in circulation! 🌳')
+      return
+    }
     const existing = getPixel(x, y)
     const pendIdx = pending.findIndex(p => p.x === x && p.y === y)
 
@@ -174,7 +201,7 @@ export default function Canvas() {
     }
 
     if (pending.length >= credits) {
-      showToast(`You only have ${credits} pixel credits.`)
+      showToast('No pixel credits left. Visit daily and post to earn more! 🌳')
       return
     }
     setPending(prev => {
@@ -201,6 +228,7 @@ export default function Canvas() {
     setPending([])
     await loadCredits()
     await loadCurrentCanvas()
+    await loadActivePool()
     setSubmitting(false)
     showToast(`${placed} pixel${placed !== 1 ? 's' : ''} placed! Editable for 10 min. 🎨`)
   }
@@ -235,6 +263,21 @@ export default function Canvas() {
       </div>
 
       <div style={{ padding:'16px 20px' }}>
+        {pixels.length === 0 && activePixelPool < poolThreshold && (
+          <div style={{ marginBottom:16, padding:16, background:'var(--accent-light)', borderRadius:12 }}>
+            <div style={{ fontSize:14, fontWeight:700, color:'var(--accent)', marginBottom:6 }}>🔒 Warming up...</div>
+            <div style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:10 }}>
+              This canvas unlocks once the community has earned enough pixels to fill at least 30% of it. Keep visiting and posting to help unlock it!
+            </div>
+            <div style={{ height:8, background:'var(--bg)', borderRadius:6, overflow:'hidden', marginBottom:6 }}>
+              <div style={{ height:'100%', width:`${Math.min(100, (activePixelPool / poolThreshold) * 100)}%`, background:'var(--accent)', borderRadius:6, transition:'width 0.3s' }} />
+            </div>
+            <div style={{ fontSize:12, color:'var(--text3)' }}>
+              {activePixelPool} / {poolThreshold} pixels in the community pool
+            </div>
+          </div>
+        )}
+
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
           <div style={{ fontSize:13, fontWeight:600, color:'var(--text2)' }}>
             {pixels.length} / {(currentCanvas?.width || 48) * (currentCanvas?.height || 24)} pixels filled

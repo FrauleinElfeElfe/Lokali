@@ -28,6 +28,10 @@ export default function Layout({ children }) {
       <div className="topbar">
         <div className="logo">lokali</div>
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <button onClick={() => navigate('/supporters')} title="First 100 Supporters"
+            style={{ background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:'50%', width:34, height:34, cursor:'pointer', fontSize:16 }}>
+            🌟
+          </button>
           <div onClick={() => navigate('/canvas')} style={{ fontSize:13, fontWeight:700, color:'var(--accent)', background:'var(--accent-light)', padding:'5px 10px', borderRadius:20, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
             {credits ?? '–'} 🟦
           </div>

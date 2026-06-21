@@ -24,6 +24,7 @@ Contact: wriedtsarah@googlemail.com
 • Location (GPS coordinates) – only when you grant permission
 • Username, age range, gender, community badges – optional profile info
 • Posts, comments, private messages – content you create
+• Social media name and link – only if you voluntarily claim a "First 100 Supporters" slot; this is shown publicly to all users and on a dedicated page
 • IP address – automatically logged by Supabase/Vercel for security
 We do NOT collect phone numbers, payment data, or advertising data.
 
@@ -32,12 +33,13 @@ We do NOT collect phone numbers, payment data, or advertising data.
 • Location: to show nearby posts (Art. 6(1)(a) GDPR – your consent)
 • Profile data: to personalise your profile (consent)
 • Posts/messages: core functionality (contract)
+• Social media name/link: published only with your explicit, voluntary action when claiming a supporter slot (Art. 6(1)(a) GDPR – consent). You can remove it at any time, which deletes it immediately.
 
 4. Where data is stored
 Data is stored with Supabase (database) and Vercel (hosting), both with strong security standards (ISO 27001, SOC 2). Data may be processed on servers in the United States. By using lokali, you consent to this transfer.
 
 5. How long we keep data
-Your data is kept for as long as your account is active. If you delete your account, all your data (posts, comments, messages, profile) will be permanently deleted immediately. Your email address (held by Supabase Auth) will be removed within 30 days.
+Your data is kept for as long as your account is active. If you delete your account, all your data (posts, comments, messages, profile, supporter entry) will be permanently deleted immediately. Your email address (held by Supabase Auth) will be removed within 30 days.
 
 6. Your rights (GDPR)
 You have the right to: access your data, correct inaccurate data, delete your data, withdraw consent, data portability, and lodge a complaint with ULD Schleswig-Holstein.
@@ -49,7 +51,7 @@ lokali does not use advertising cookies or third-party tracking. Only technical 
 8. Changes to this policy
 Changes will be posted here. Continued use constitutes acceptance.
 
-Last updated: May 2026
+Last updated: June 2026
 
 IMPRESSUM
 Sarah Wriedt
@@ -101,38 +103,21 @@ export default function Login() {
         <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
           <strong>Find your online besties nearby 💬✨</strong>
           <br /><br />
-          No swiping, no rankings. Simply people who happened to be there at the same time.
+          Spontaneous conversations — no swiping, no rankings. Simply two people who happened to be in the same place, starting a conversation.
           <br /><br />
           <strong>What makes lokali different?</strong>
           <br /><br />
-        </p>
-        <p style={{ fontFamily: 'Caveat, cursive', fontSize: 24, color: 'var(--accent)', lineHeight: 1.7 }}>
-          <strong>The problem with most apps:</strong><br />
-        </p>
-        <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
-          <strong>1. Intention (friendship/relationship) → Decisions over people (swiping) → Getting to know each other</strong>
+          <strong>1. The problem with most apps:</strong><br />
+          Intention → Decision (swiping) → Getting to know each other
           <br /><br />
           But it should be the other way around:<br />
-          <em>Getting to know each other → Decisions → Intention for friendship or relationship</em>
+          Getting to know each other → Deciding whether you like them → Building a friendship or relationship
           <br /><br />
-          Many people today struggle with real-life interaction. lokali helps you build online connections with people nearby, so taking things offline is actually possible.
+          Many people today struggle with real-life interaction. lokali helps you build connections with people nearby — close enough that taking things offline is actually possible.
           <br /><br />
-          <strong>2. Toxicity.</strong><br />
-          To reduce toxicity lokali is:
+          <strong>2. Reducing toxicity.</strong><br />
+          lokali is only partially anonymous – yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳
         </p>
-        <ul style={{
-          fontSize: 14,
-          color: 'var(--text2)',
-          lineHeight: 1.7,
-          margin: '4px 0 0 0',
-          paddingLeft: 20
-        }}>
-          <li>strictly moderated</li>
-          <li>only available when you have the link<br />
-            (given from friends to friends/ mooties to mooties)
-          </li>
-          <li>only partially anonymous, yet anonymous enough that the focus stays on interactions, rather than self-promotion and competition. 🌳</li>
-        </ul>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>

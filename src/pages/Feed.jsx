@@ -170,7 +170,7 @@ const REPORT_REASONS = [
   'Other',
 ]
 
-const AD_BANNERS = [{ src: '/ad-banner-1.jpg', interval: 20 }]
+const AD_BANNERS = [{ src: '/ad-banner-1.jpg', interval: 15 }]
 
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
@@ -321,6 +321,7 @@ export default function Feed() {
 
   async function handlePost() {
     if (!text.trim()) return
+    if (text.length > 500) { showToast('Your post is too long – please shorten it to 500 characters.'); return }
     setSending(true)
     try {
       await createPost(user.id, text.trim(),
@@ -411,7 +412,7 @@ export default function Feed() {
         {openMenu === 'southamerica' && <CountryDropdown countries={SOUTH_AMERICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
       </div>
 
-      <div className="compose-bar">
+      <div className="compose-bar" style={{ flexWrap:'wrap' }}>
         <div className="avatar">{profile?.avatar}</div>
         <div style={{ flex:1, position:'relative' }}>
           <textarea className="compose-input" placeholder="What's happening near you?"
@@ -429,14 +430,14 @@ export default function Feed() {
               ))}
             </div>
           )}
+          <div style={{ fontSize:11, color: text.length > 500 ? '#cc3333' : 'var(--text3)', textAlign:'right', marginTop:4 }}>
+            {text.length} / 500
+          </div>
         </div>
         <button className="send-btn" onClick={handlePost} disabled={sending}>↑</button>
       </div>
 
-      <div className="post-card" onClick={() => navigate('/canvas')} style={{ cursor:'pointer', position:'relative' }}>
-        <button onClick={e => { e.stopPropagation(); navigate('/supporters') }}
-          style={{ position:'absolute', right:8, top:8, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:'50%', width:30, height:30, cursor:'pointer', fontSize:16, color:'var(--accent)', zIndex:2 }}
-          title="First 100 Supporters">🌟</button>
+      <div className="post-card" onClick={() => navigate('/canvas')} style={{ cursor:'pointer' }}>
         <div style={{ fontSize:13, fontWeight:600, color:'var(--text2)', marginBottom:10, display:'flex', alignItems:'center', gap:6 }}>
           🎨 Community Canvas
           <span style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto' }}>Tap to paint →</span>
@@ -466,7 +467,7 @@ export default function Feed() {
           const cmts = cmtsData[post.id] || []
           const cntDisplay = cntData[post.id] ?? 0
           const ad = AD_BANNERS[0]
-          const showAdBefore = ad && idx % ad.interval === 0
+          const showAdBefore = ad && idx > 0 && idx % ad.interval === 0
           return (
             <div key={post.id}>
               {showAdBefore && (
