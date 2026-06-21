@@ -221,12 +221,28 @@ export default function Feed() {
   const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
   const [adIndex, setAdIndex] = useState(0)
+  const [canvasPreview, setCanvasPreview] = useState(null)
+  const [canvasPixels, setCanvasPixels] = useState([])
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
 
   useEffect(() => {
     setAdIndex(Math.floor(Math.random() * AD_BANNERS.length))
+    loadCanvasPreview()
+    const ch = supabase.channel('canvas-preview-feed')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'canvas_pixels' }, loadCanvasPreview)
+      .subscribe()
+    return () => supabase.removeChannel(ch)
   }, [])
+
+  async function loadCanvasPreview() {
+    const { data: cv } = await supabase.from('canvas_current').select('*').eq('is_full', false).order('id', { ascending: false }).limit(1).maybeSingle()
+    setCanvasPreview(cv)
+    if (cv) {
+      const { data: px } = await supabase.from('canvas_pixels').select('*').eq('canvas_id', cv.id)
+      setCanvasPixels(px || [])
+    }
+  }
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(
@@ -362,9 +378,26 @@ export default function Feed() {
         <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
       </div>
 
-      <div onClick={() => navigate('/canvas')} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'10px 20px', borderBottom:'0.5px solid var(--border)', cursor:'pointer', background:'var(--accent-light)' }}>
-        <span style={{ fontSize:16 }}>🎨</span>
-        <span style={{ fontSize:13, fontWeight:600, color:'var(--accent)' }}>Paint on the Community Canvas</span>
+      <div onClick={() => navigate('/canvas')} style={{ padding:'12px 20px', borderBottom:'0.5px solid var(--border)', cursor:'pointer' }}>
+        <div style={{ fontSize:12, fontWeight:600, color:'var(--text2)', marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+          🎨 Community Canvas
+          <span style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto' }}>Tap to paint →</span>
+        </div>
+        <div style={{ overflowX:'auto' }}>
+          <div style={{
+            display:'grid',
+            gridTemplateColumns: `repeat(${canvasPreview?.width || 48}, 6px)`,
+            gridTemplateRows: `repeat(${canvasPreview?.height || 24}, 6px)`,
+            border:'1px solid var(--border)', width:'fit-content', borderRadius:6, background:'var(--bg2)',
+          }}>
+            {Array.from({ length: (canvasPreview?.height || 24) }).map((_, y) =>
+              Array.from({ length: (canvasPreview?.width || 48) }).map((_, x) => {
+                const px = canvasPixels.find(p => p.x === x && p.y === y)
+                return <div key={`${x}-${y}`} style={{ width:6, height:6, background: px ? px.color : 'transparent' }} />
+              })
+            )}
+          </div>
+        </div>
       </div>
 
       <div style={{ position:'relative' }}>
