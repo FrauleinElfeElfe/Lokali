@@ -60,6 +60,7 @@ export default function Canvas() {
   const [light, setLight] = useState(50)
   const [pickerColor, setPickerColorRaw] = useState('#FF0000')
   const [pending, setPending] = useState([]) // [{x,y,color}] – not yet saved
+  const [activePendingIdx, setActivePendingIdx] = useState(null) // which pending pixel reacts live to slider
   const [editingPixelId, setEditingPixelId] = useState(null) // sealed-pixel edit mode (existing own pixel)
   const [submitting, setSubmitting] = useState(false)
   const [favorites, setFavorites] = useState([])
@@ -77,10 +78,17 @@ export default function Canvas() {
     setPickerColorRaw(hex.toUpperCase())
     const hsl = hexToHsl(hex)
     if (hsl) { setHue(hsl.h); setSat(hsl.s); setLight(hsl.l) }
+    if (activePendingIdx !== null) {
+      setPending(prev => prev.map((p, i) => i === activePendingIdx ? { ...p, color: hex.toUpperCase() } : p))
+    }
   }
 
   useEffect(() => {
-    setPickerColorRaw(hslToHex(hue, sat, light))
+    const hex = hslToHex(hue, sat, light)
+    setPickerColorRaw(hex)
+    if (activePendingIdx !== null) {
+      setPending(prev => prev.map((p, i) => i === activePendingIdx ? { ...p, color: hex } : p))
+    }
   }, [hue, sat, light])
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 2500) }
@@ -135,11 +143,20 @@ export default function Canvas() {
 
   function handleCellClick(x, y) {
     const existing = getPixel(x, y)
-    const pend = getPending(x, y)
+    const pendIdx = pending.findIndex(p => p.x === x && p.y === y)
 
-    if (pend) {
-      // remove from pending (undo before saving)
-      setPending(prev => prev.filter(p => !(p.x === x && p.y === y)))
+    if (pendIdx !== -1) {
+      if (activePendingIdx === pendIdx) {
+        // second click on the already-active pixel removes it
+        setPending(prev => prev.filter((_, i) => i !== pendIdx))
+        setActivePendingIdx(null)
+        return
+      }
+      // make it the active one (slider now controls its color)
+      setActivePendingIdx(pendIdx)
+      setPickerColorRaw(pending[pendIdx].color)
+      const hsl = hexToHsl(pending[pendIdx].color)
+      if (hsl) { setHue(hsl.h); setSat(hsl.s); setLight(hsl.l) }
       return
     }
 
@@ -148,6 +165,7 @@ export default function Canvas() {
       const age = Date.now() - new Date(existing.placed_at)
       if (isMine && age < 10 * 60 * 1000) {
         setEditingPixelId(existing.id)
+        setActivePendingIdx(null)
         setPickerColor(existing.color)
       } else {
         showToast(isMine ? 'This pixel is sealed.' : 'Already claimed by someone else.')
@@ -159,7 +177,11 @@ export default function Canvas() {
       showToast(`You only have ${credits} pixel credits.`)
       return
     }
-    setPending(prev => [...prev, { x, y }])
+    setPending(prev => {
+      const next = [...prev, { x, y, color: pickerColor }]
+      setActivePendingIdx(next.length - 1)
+      return next
+    })
   }
 
   function removePending(x, y) {
@@ -235,20 +257,21 @@ export default function Canvas() {
                 const px = getPixel(x, y)
                 const pend = getPending(x, y)
                 const isEditing = editingPixelId && px?.id === editingPixelId
+                const isActivePending = pend && pending.findIndex(p => p.x === x && p.y === y) === activePendingIdx
                 return (
                   <div key={`${x}-${y}`}
                     onClick={() => handleCellClick(x, y)}
                     style={{
                       width: cellSize, height: cellSize,
-                      background: isEditing ? pickerColor : (pend ? pickerColor : (px ? px.color : 'var(--bg2)')),
-                      outline: pend ? '2px dashed var(--accent)' : (isEditing ? '2px solid var(--accent)' : 'none'),
+                      background: isEditing ? pickerColor : (pend ? pend.color : (px ? px.color : 'var(--bg2)')),
+                      outline: isActivePending ? '2px solid var(--accent)' : (pend ? '2px dashed var(--accent)' : (isEditing ? '2px solid var(--accent)' : 'none')),
                       outlineOffset: -1,
                       border: '0.5px solid rgba(0,0,0,0.06)',
                       cursor: 'pointer',
                       boxSizing: 'border-box',
                       opacity: pend ? 0.85 : 1,
                     }}
-                    title={px ? `@${px.username}` : (pend ? 'Pending – tap to remove' : 'Empty')}
+                    title={px ? `@${px.username}` : (pend ? 'Tap to edit color, tap twice to remove' : 'Empty')}
                   />
                 )
               })
@@ -293,7 +316,7 @@ export default function Canvas() {
             {editingPixelId
               ? 'Editing an existing pixel – adjust the color and confirm above.'
               : pending.length > 0
-                ? 'Adjust the color below — it updates all selected pixels live. Tap empty pixels above to add more, or a marked one to remove it.'
+                ? 'The slider controls the last-tapped pixel (highlighted). Tap any other selected pixel to edit its color, or tap it twice to remove it.'
                 : 'Pick a color, then tap empty pixels above to mark them.'}
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
