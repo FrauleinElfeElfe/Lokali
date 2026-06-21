@@ -378,28 +378,6 @@ export default function Feed() {
         <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
       </div>
 
-      <div onClick={() => navigate('/canvas')} style={{ padding:'12px 20px', borderBottom:'0.5px solid var(--border)', cursor:'pointer' }}>
-        <div style={{ fontSize:12, fontWeight:600, color:'var(--text2)', marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
-          🎨 Community Canvas
-          <span style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto' }}>Tap to paint →</span>
-        </div>
-        <div style={{ overflowX:'auto' }}>
-          <div style={{
-            display:'grid',
-            gridTemplateColumns: `repeat(${canvasPreview?.width || 48}, 6px)`,
-            gridTemplateRows: `repeat(${canvasPreview?.height || 24}, 6px)`,
-            border:'1px solid var(--border)', width:'fit-content', borderRadius:6, background:'var(--bg2)',
-          }}>
-            {Array.from({ length: (canvasPreview?.height || 24) }).map((_, y) =>
-              Array.from({ length: (canvasPreview?.width || 48) }).map((_, x) => {
-                const px = canvasPixels.find(p => p.x === x && p.y === y)
-                return <div key={`${x}-${y}`} style={{ width:6, height:6, background: px ? px.color : 'transparent' }} />
-              })
-            )}
-          </div>
-        </div>
-      </div>
-
       <div style={{ position:'relative' }}>
         <div style={{ position:'relative', display:'flex', alignItems:'center', borderBottom:'0.5px solid var(--border)' }}>
           <button onClick={() => document.getElementById('radius-scroll').scrollBy({ left: -120, behavior: 'smooth' })}
@@ -450,6 +428,29 @@ export default function Feed() {
           )}
         </div>
         <button className="send-btn" onClick={handlePost} disabled={sending}>↑</button>
+      </div>
+
+      <div className="post-card" onClick={() => navigate('/canvas')} style={{ cursor:'pointer' }}>
+        <div style={{ fontSize:13, fontWeight:600, color:'var(--text2)', marginBottom:10, display:'flex', alignItems:'center', gap:6 }}>
+          🎨 Community Canvas
+          <span style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto' }}>Tap to paint →</span>
+        </div>
+        <div style={{ width:'100%', overflowX:'auto' }}>
+          <div style={{
+            display:'grid',
+            gridTemplateColumns: `repeat(${canvasPreview?.width || 48}, minmax(0,1fr))`,
+            gridTemplateRows: `repeat(${canvasPreview?.height || 24}, 1fr)`,
+            width:'100%', aspectRatio: `${canvasPreview?.width || 48} / ${canvasPreview?.height || 24}`,
+            border:'1px solid var(--border)', borderRadius:8, background:'var(--bg2)', overflow:'hidden',
+          }}>
+            {Array.from({ length: (canvasPreview?.height || 24) }).map((_, y) =>
+              Array.from({ length: (canvasPreview?.width || 48) }).map((_, x) => {
+                const px = canvasPixels.find(p => p.x === x && p.y === y)
+                return <div key={`${x}-${y}`} style={{ background: px ? px.color : 'transparent' }} />
+              })
+            )}
+          </div>
+        </div>
       </div>
 
       {posts.length === 0
