@@ -11,6 +11,40 @@ const COLORS = [
   '#7CFC00','#00CED1','#1E90FF','#9400D3','#FF1493',
   '#8B4513','#2F4F4F','#FF69B4','#00FF7F','#FFFACD',
 ]
+const QUICK_COLORS = COLORS
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100
+  const k = n => (n + h / 30) % 12
+  const a = s * Math.min(l, 1 - l)
+  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
+  const toHex = x => Math.round(255 * x).toString(16).padStart(2, '0')
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`.toUpperCase()
+}
+
+function hexToHsl(hex) {
+  let r = 0, g = 0, b = 0
+  hex = hex.replace('#', '')
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('')
+  if (hex.length !== 6) return null
+  r = parseInt(hex.slice(0, 2), 16) / 255
+  g = parseInt(hex.slice(2, 4), 16) / 255
+  b = parseInt(hex.slice(4, 6), 16) / 255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b)
+  let h, s, l = (max + min) / 2
+  if (max === min) { h = s = 0 }
+  else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)); break
+      case g: h = (b - r) / d + 2; break
+      case b: h = (r - g) / d + 4; break
+    }
+    h *= 60
+  }
+  return { h: Math.round(h), s: Math.round(s * 100), l: Math.round(l * 100) }
+}
 
 export default function Canvas() {
   const { user, profile } = useAuth()
@@ -23,6 +57,20 @@ export default function Canvas() {
   const [toast, setToast] = useState('')
   const [loading, setLoading] = useState(true)
   const [zoom, setZoom] = useState(1)
+  const [hue, setHue] = useState(0)
+  const [sat, setSat] = useState(100)
+  const [light, setLight] = useState(50)
+  const [pickerColor, setPickerColorRaw] = useState('#FF0000')
+
+  function setPickerColor(hex) {
+    setPickerColorRaw(hex.toUpperCase())
+    const hsl = hexToHsl(hex)
+    if (hsl) { setHue(hsl.h); setSat(hsl.s); setLight(hsl.l) }
+  }
+
+  useEffect(() => {
+    setPickerColorRaw(hslToHex(hue, sat, light))
+  }, [hue, sat, light])
 
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 2500) }
 
@@ -78,6 +126,7 @@ export default function Canvas() {
       const age = Date.now() - new Date(existing.placed_at)
       if (isMine && age < 10 * 60 * 1000) {
         setSelectedXY({ x, y, isNew: false, pixelId: existing.id })
+        setPickerColor(existing.color)
       } else {
         showToast(isMine ? 'This pixel is sealed.' : 'Already claimed by someone else.')
         setSelectedXY(null)
@@ -181,15 +230,57 @@ export default function Canvas() {
           pointerEvents: selectedXY ? 'auto' : 'none',
           transition: 'opacity 0.2s'
         }}>
-          <div style={{ fontSize:12, color:'var(--text3)', marginBottom:8 }}>
+          <div style={{ fontSize:12, color:'var(--text3)', marginBottom:10 }}>
             {selectedXY ? `Pick a color for pixel (${selectedXY.x}, ${selectedXY.y})` : 'Tap an empty pixel to start painting'}
           </div>
-          <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-            {COLORS.map(c => (
-              <div key={c} onClick={() => handleColorPick(c)}
-                style={{ width:32, height:32, background:c, borderRadius:8, cursor: selectedXY ? 'pointer' : 'default', border:'1px solid var(--border)' }} />
+
+          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+            <div style={{ width:48, height:48, borderRadius:10, background: pickerColor, border:'1px solid var(--border)', flexShrink:0 }} />
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:11, color:'var(--text3)', marginBottom:2 }}>Hex code</div>
+              <input value={pickerColor} onChange={e => setPickerColor(e.target.value)}
+                style={{ width:'100%', padding:'8px 10px', borderRadius:8, border:'0.5px solid var(--border)', background:'var(--bg2)', color:'var(--text)', fontFamily:'monospace', fontSize:14 }} />
+            </div>
+          </div>
+
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Hue</span><span>{hue}°</span>
+            </div>
+            <input type="range" min="0" max="359" value={hue}
+              onChange={e => setHue(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:'linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)', WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Saturation</span><span>{sat}%</span>
+            </div>
+            <input type="range" min="0" max="100" value={sat}
+              onChange={e => setSat(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, hsl(${hue},0%,${light}%), hsl(${hue},100%,${light}%))`, WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ marginBottom:14 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Lightness</span><span>{light}%</span>
+            </div>
+            <input type="range" min="0" max="100" value={light}
+              onChange={e => setLight(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, #000, hsl(${hue},${sat}%,50%), #fff)`, WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ display:'flex', flexWrap:'wrap', gap:4, marginBottom:14 }}>
+            {QUICK_COLORS.map(c => (
+              <div key={c} onClick={() => setPickerColor(c)}
+                style={{ width:22, height:22, background:c, borderRadius:5, cursor:'pointer', border: pickerColor.toLowerCase() === c.toLowerCase() ? '2px solid var(--accent)' : '1px solid var(--border)' }} />
             ))}
           </div>
+
+          <button onClick={() => handleColorPick(pickerColor)} disabled={!selectedXY}
+            style={{ width:'100%', padding:12, background:'var(--accent)', color:'white', border:'none', borderRadius:10, cursor: selectedXY ? 'pointer' : 'default', fontFamily:'inherit', fontSize:14, fontWeight:600 }}>
+            {selectedXY?.isNew ? 'Place pixel' : 'Update pixel'}
+          </button>
         </div>
 
         <div style={{ marginTop:36, fontSize:14, fontWeight:700, color:'var(--text)' }}>Completed canvases 🖼️</div>
