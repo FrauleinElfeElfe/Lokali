@@ -170,7 +170,7 @@ const REPORT_REASONS = [
   'Other',
 ]
 
-const AD_BANNERS = ['/ad-banner-1.jpg']
+const AD_BANNERS = [{ src: '/ad-banner-1.jpg', interval: 20 }]
 
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
@@ -203,6 +203,15 @@ function CountryDropdown({ countries, activeLabel, onSelect, onClose }) {
 export default function Feed() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const [touchStartX, setTouchStartX] = useState(null)
+
+  function handleTouchStart(e) { setTouchStartX(e.touches[0].clientX) }
+  function handleTouchEnd(e) {
+    if (touchStartX === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX
+    if (dx < -80) navigate('/supporters')
+    setTouchStartX(null)
+  }
   const [posts, setPosts] = useState([])
   const [radius, setRadius] = useState(5)
   const [activeBounds, setActiveBounds] = useState(null)
@@ -227,7 +236,6 @@ export default function Feed() {
   function showToast(m) { setToast(m); setTimeout(() => setToast(''), 3000) }
 
   useEffect(() => {
-    setAdIndex(Math.floor(Math.random() * AD_BANNERS.length))
     loadCanvasPreview()
     const ch = supabase.channel('canvas-preview-feed')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'canvas_pixels' }, loadCanvasPreview)
@@ -363,7 +371,7 @@ export default function Feed() {
   }
 
   return (
-    <>
+    <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {locDenied && (
         <div style={{ background:'#fff8e1', borderBottom:'0.5px solid #ffe082', padding:'10px 20px', fontSize:13, color:'#7a5c00', lineHeight:1.5 }}>
           📍 Location access denied – showing <strong>Global</strong> posts. Enable location in your browser to see local posts.
@@ -371,11 +379,6 @@ export default function Feed() {
       )}
       <div style={{ padding:'6px 20px 2px', fontSize:11, color:'var(--text3)', fontStyle:'italic', textAlign:'center' }}>
         from online back to real life 🌳
-      </div>
-
-      <div style={{ padding:'10px 20px', borderBottom:'0.5px solid var(--border)' }}>
-        <img src={AD_BANNERS[adIndex]} alt="Advertisement" style={{ width:'100%', borderRadius:12, display:'block' }} />
-        <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
       </div>
 
       <div style={{ position:'relative' }}>
@@ -430,7 +433,10 @@ export default function Feed() {
         <button className="send-btn" onClick={handlePost} disabled={sending}>↑</button>
       </div>
 
-      <div className="post-card" onClick={() => navigate('/canvas')} style={{ cursor:'pointer' }}>
+      <div className="post-card" onClick={() => navigate('/canvas')} style={{ cursor:'pointer', position:'relative' }}>
+        <button onClick={e => { e.stopPropagation(); navigate('/supporters') }}
+          style={{ position:'absolute', right:8, top:8, background:'var(--bg2)', border:'0.5px solid var(--border)', borderRadius:'50%', width:30, height:30, cursor:'pointer', fontSize:16, color:'var(--accent)', zIndex:2 }}
+          title="First 100 Supporters">🌟</button>
         <div style={{ fontSize:13, fontWeight:600, color:'var(--text2)', marginBottom:10, display:'flex', alignItems:'center', gap:6 }}>
           🎨 Community Canvas
           <span style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto' }}>Tap to paint →</span>
@@ -455,12 +461,21 @@ export default function Feed() {
 
       {posts.length === 0
         ? <div className="empty-state">No posts in this area yet.<br />Be the first! ✍️</div>
-        : posts.map(post => {
+        : posts.map((post, idx) => {
           const isOwn = post.user_id === user.id
           const cmts = cmtsData[post.id] || []
           const cntDisplay = cntData[post.id] ?? 0
+          const ad = AD_BANNERS[0]
+          const showAdBefore = ad && idx % ad.interval === 0
           return (
-            <div className="post-card" key={post.id}>
+            <div key={post.id}>
+              {showAdBefore && (
+                <div style={{ padding:'10px 20px', borderBottom:'0.5px solid var(--border)' }}>
+                  <img src={ad.src} alt="Advertisement" style={{ width:'100%', borderRadius:12, display:'block' }} />
+                  <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
+                </div>
+              )}
+            <div className="post-card">
               <div className="post-header">
                 <div className="avatar" style={{ cursor:'pointer' }}
                   onClick={() => navigate(`/profile/${post.user_id}`)}>
@@ -505,6 +520,7 @@ export default function Feed() {
                 </div>
               )}
             </div>
+            </div>
           )
         })
       }
@@ -533,6 +549,6 @@ export default function Feed() {
       )}
 
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
-    </>
+    </div>
   )
 }

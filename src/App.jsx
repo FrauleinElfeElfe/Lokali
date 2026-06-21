@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import PublicProfile from './pages/PublicProfile'
 import Legal from './pages/Legal'
 import Canvas from './pages/Canvas'
+import EarlySupporters from './pages/EarlySupporters'
 import Layout from './components/Layout'
 import { useEffect } from 'react'
 import { supabase } from './lib/supabase'
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="/profile/:userId" element={<PublicProfile />} />
         <Route path="/legal" element={<Legal />} />
         <Route path="/canvas" element={<Canvas />} />
+        <Route path="/supporters" element={<EarlySupporters />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Layout>
