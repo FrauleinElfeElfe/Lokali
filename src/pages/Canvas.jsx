@@ -62,6 +62,16 @@ export default function Canvas() {
   const [pending, setPending] = useState([]) // [{x,y,color}] – not yet saved
   const [editingPixelId, setEditingPixelId] = useState(null) // sealed-pixel edit mode (existing own pixel)
   const [submitting, setSubmitting] = useState(false)
+  const [favorites, setFavorites] = useState([])
+
+  function addFavorite() {
+    if (favorites.includes(pickerColor)) return
+    if (favorites.length >= 20) { showToast('Max 20 favorites – remove one first.'); return }
+    setFavorites(prev => [...prev, pickerColor])
+  }
+  function removeFavorite(c) {
+    setFavorites(prev => prev.filter(f => f !== c))
+  }
 
   function setPickerColor(hex) {
     setPickerColorRaw(hex.toUpperCase())
@@ -149,7 +159,7 @@ export default function Canvas() {
       showToast(`You only have ${credits} pixel credits.`)
       return
     }
-    setPending(prev => [...prev, { x, y, color: pickerColor }])
+    setPending(prev => [...prev, { x, y }])
   }
 
   function removePending(x, y) {
@@ -162,7 +172,7 @@ export default function Canvas() {
     let placed = 0
     for (const p of pending) {
       const { data, error } = await supabase.rpc('place_pixel', {
-        p_user_id: user.id, p_x: p.x, p_y: p.y, p_color: p.color, p_username: profile?.username
+        p_user_id: user.id, p_x: p.x, p_y: p.y, p_color: pickerColor, p_username: profile?.username
       })
       if (!error && data?.success) placed++
     }
@@ -203,58 +213,6 @@ export default function Canvas() {
       </div>
 
       <div style={{ padding:'16px 20px' }}>
-        {/* COLOR PICKER - always active */}
-        <div style={{ marginBottom:16, padding:14, background:'var(--bg2)', borderRadius:12 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
-            <div style={{ width:48, height:48, borderRadius:10, background: pickerColor, border:'1px solid var(--border)', flexShrink:0 }} />
-            <div style={{ flex:1 }}>
-              <div style={{ fontSize:11, color:'var(--text3)', marginBottom:2 }}>Hex code</div>
-              <input value={pickerColor} onChange={e => setPickerColor(e.target.value)}
-                style={{ width:'100%', padding:'8px 10px', borderRadius:8, border:'0.5px solid var(--border)', background:'var(--bg)', color:'var(--text)', fontFamily:'monospace', fontSize:14 }} />
-            </div>
-          </div>
-
-          <div style={{ marginBottom:10 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
-              <span>Hue</span><span>{hue}°</span>
-            </div>
-            <input type="range" min="0" max="359" value={hue}
-              onChange={e => setHue(Number(e.target.value))}
-              style={{ width:'100%', height:14, borderRadius:8, background:'linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)', WebkitAppearance:'none', outline:'none' }} />
-          </div>
-
-          <div style={{ marginBottom:10 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
-              <span>Saturation</span><span>{sat}%</span>
-            </div>
-            <input type="range" min="0" max="100" value={sat}
-              onChange={e => setSat(Number(e.target.value))}
-              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, hsl(${hue},0%,${light}%), hsl(${hue},100%,${light}%))`, WebkitAppearance:'none', outline:'none' }} />
-          </div>
-
-          <div style={{ marginBottom:14 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
-              <span>Lightness</span><span>{light}%</span>
-            </div>
-            <input type="range" min="0" max="100" value={light}
-              onChange={e => setLight(Number(e.target.value))}
-              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, #000, hsl(${hue},${sat}%,50%), #fff)`, WebkitAppearance:'none', outline:'none' }} />
-          </div>
-
-          <div style={{ display:'flex', flexWrap:'wrap', gap:4 }}>
-            {QUICK_COLORS.map(c => (
-              <div key={c} onClick={() => setPickerColor(c)}
-                style={{ width:22, height:22, background:c, borderRadius:5, cursor:'pointer', border: pickerColor.toLowerCase() === c.toLowerCase() ? '2px solid var(--accent)' : '1px solid var(--border)' }} />
-            ))}
-          </div>
-        </div>
-
-        <div style={{ fontSize:12, color:'var(--text2)', marginBottom:10, lineHeight:1.5 }}>
-          {editingPixelId
-            ? 'Editing an existing pixel of yours – pick a new color and confirm below.'
-            : 'Tap empty pixels to mark them with the current color. Tap a marked pixel again to undo it.'}
-        </div>
-
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
           <div style={{ fontSize:13, fontWeight:600, color:'var(--text2)' }}>
             {pixels.length} / {(currentCanvas?.width || 48) * (currentCanvas?.height || 24)} pixels filled
@@ -282,7 +240,7 @@ export default function Canvas() {
                     onClick={() => handleCellClick(x, y)}
                     style={{
                       width: cellSize, height: cellSize,
-                      background: isEditing ? pickerColor : (pend ? pend.color : (px ? px.color : 'var(--bg2)')),
+                      background: isEditing ? pickerColor : (pend ? pickerColor : (px ? px.color : 'var(--bg2)')),
                       outline: pend ? '2px dashed var(--accent)' : (isEditing ? '2px solid var(--accent)' : 'none'),
                       outlineOffset: -1,
                       border: '0.5px solid rgba(0,0,0,0.06)',
@@ -328,6 +286,66 @@ export default function Canvas() {
             </button>
           </div>
         )}
+
+        {/* COLOR PICKER - below canvas */}
+        <div style={{ marginTop:16, padding:14, background:'var(--bg2)', borderRadius:12 }}>
+          <div style={{ fontSize:12, color:'var(--text2)', marginBottom:12, lineHeight:1.5 }}>
+            {editingPixelId
+              ? 'Editing an existing pixel – adjust the color and confirm above.'
+              : pending.length > 0
+                ? 'Adjust the color below — it updates all selected pixels live. Tap empty pixels above to add more, or a marked one to remove it.'
+                : 'Pick a color, then tap empty pixels above to mark them.'}
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+            <div style={{ width:48, height:48, borderRadius:10, background: pickerColor, border:'1px solid var(--border)', flexShrink:0 }} />
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:11, color:'var(--text3)', marginBottom:2 }}>Hex code</div>
+              <input value={pickerColor} onChange={e => setPickerColor(e.target.value)}
+                style={{ width:'100%', padding:'8px 10px', borderRadius:8, border:'0.5px solid var(--border)', background:'var(--bg)', color:'var(--text)', fontFamily:'monospace', fontSize:14 }} />
+            </div>
+            <button onClick={addFavorite} title="Save as favorite"
+              style={{ width:36, height:36, borderRadius:8, border:'0.5px solid var(--border)', background:'var(--bg)', cursor:'pointer', fontSize:16, flexShrink:0 }}>
+              ★
+            </button>
+          </div>
+
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Hue</span><span>{hue}°</span>
+            </div>
+            <input type="range" min="0" max="359" value={hue}
+              onChange={e => setHue(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:'linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)', WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Saturation</span><span>{sat}%</span>
+            </div>
+            <input type="range" min="0" max="100" value={sat}
+              onChange={e => setSat(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, hsl(${hue},0%,${light}%), hsl(${hue},100%,${light}%))`, WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ marginBottom:14 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text3)', marginBottom:4 }}>
+              <span>Lightness</span><span>{light}%</span>
+            </div>
+            <input type="range" min="0" max="100" value={light}
+              onChange={e => setLight(Number(e.target.value))}
+              style={{ width:'100%', height:14, borderRadius:8, background:`linear-gradient(to right, #000, hsl(${hue},${sat}%,50%), #fff)`, WebkitAppearance:'none', outline:'none' }} />
+          </div>
+
+          <div style={{ fontSize:11, color:'var(--text3)', marginBottom:6 }}>Your favorites (tap ★ above to add)</div>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:4 }}>
+            {favorites.length === 0 && <div style={{ fontSize:11, color:'var(--text3)', fontStyle:'italic' }}>No favorites yet</div>}
+            {favorites.map(c => (
+              <div key={c} onClick={() => setPickerColor(c)} onContextMenu={e => { e.preventDefault(); removeFavorite(c) }}
+                style={{ width:24, height:24, background:c, borderRadius:5, cursor:'pointer', border: pickerColor.toLowerCase() === c.toLowerCase() ? '2px solid var(--accent)' : '1px solid var(--border)', position:'relative' }}
+                title="Tap to use, long-press/right-click to remove" />
+            ))}
+          </div>
+        </div>
 
         <div style={{ marginTop:36, fontSize:14, fontWeight:700, color:'var(--text)' }}>Completed canvases 🖼️</div>
         {archive.length === 0 && (
