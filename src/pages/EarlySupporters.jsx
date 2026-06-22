@@ -34,14 +34,13 @@ export default function EarlySupporters() {
     const { data, error } = await supabase.rpc('claim_supporter_slot', {
       p_user_id: user.id, p_name: name.trim(), p_url: url.trim()
     })
-    setSaving(false)
     if (error || !data?.success) {
+      setSaving(false)
       showToast(data?.error || error?.message || 'Error claiming slot')
       return
     }
     showToast(`You got slot #${data.slot}! 🎉`)
     setShowForm(false)
-    // Create a one-time feed post announcing this
     const { data: newPost } = await supabase.from('posts').insert({
       user_id: user.id,
       text: `🌟 I'm one of the first 100 lokali supporters! Check out my ${name.trim()}: ${url.trim()}`,
@@ -51,6 +50,7 @@ export default function EarlySupporters() {
       await supabase.from('early_supporters').update({ feed_post_id: newPost.id }).eq('user_id', user.id)
     }
     setName(''); setUrl('')
+    setSaving(false)
     load()
   }
 
@@ -70,12 +70,12 @@ export default function EarlySupporters() {
     <div style={{ padding: '0 0 80px' }}>
       <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 20px', borderBottom:'0.5px solid var(--border)', position:'sticky', top:0, background:'var(--bg)', zIndex:10 }}>
         <button onClick={() => navigate('/')} style={{ background:'none', border:'none', fontSize:20, cursor:'pointer', color:'var(--text2)' }}>←</button>
-        <div style={{ fontWeight:600, fontSize:15, flex:1 }}>🌟 First 100 Supporters</div>
+        <div style={{ fontWeight:600, fontSize:15, flex:1 }}>🌟 100 Supporter Slots</div>
       </div>
 
       <div style={{ padding:'16px 20px' }}>
         <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:16 }}>
-          The first 100 lokali users get a permanent shoutout here with a link to their social media. First come, first served – you can remove your entry anytime to free up the slot.
+          100 lokali users can claim a permanent shoutout here with a link to their social media. First come, first served – once full, it's full. You can remove your entry anytime to free up the slot for someone else.
         </p>
 
         <div style={{ fontSize:13, fontWeight:600, color:'var(--accent)', marginBottom:16 }}>

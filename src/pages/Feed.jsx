@@ -170,7 +170,7 @@ const REPORT_REASONS = [
   'Other',
 ]
 
-const AD_BANNERS = [{ src: '/ad-banner-1.jpg', interval: 15 }]
+const AD_BANNERS = [{ src: '/ad-banner-1.jpg', interval: 5 }] // increase to 15 once there are enough posts to test properly
 
 function timeAgo(ts) {
   const d = (Date.now() - new Date(ts)) / 1000
@@ -412,24 +412,26 @@ export default function Feed() {
         {openMenu === 'southamerica' && <CountryDropdown countries={SOUTH_AMERICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
       </div>
 
-      <div className="compose-bar" style={{ flexWrap:'wrap' }}>
+      <div className="compose-bar">
         <div className="avatar">{profile?.avatar}</div>
-        <div style={{ flex:1, position:'relative' }}>
-          <textarea className="compose-input" placeholder="What's happening near you?"
-            value={text} onChange={e => setText(e.target.value)}
-            onInput={e => { e.target.style.height='auto'; e.target.style.height=Math.min(e.target.scrollHeight,120)+'px' }}
-            onKeyDown={e => { if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); handlePost() } }}
-            style={{ width:'100%', paddingRight:40 }} />
-          <button onClick={() => setShowEmoji(s => !s)}
-            style={{ position:'absolute', right:8, bottom:10, background:'none', border:'none', fontSize:18, cursor:'pointer', opacity:0.6 }}>😊</button>
-          {showEmoji && (
-            <div style={{ position:'absolute', top:'100%', left:0, right:0, marginTop:4, background:'var(--bg)', border:'0.5px solid var(--border)', borderRadius:12, padding:10, display:'flex', flexWrap:'wrap', gap:4, zIndex:50, boxShadow:'0 4px 20px rgba(0,0,0,0.12)' }}>
-              {EMOJIS.map(e => (
-                <span key={e} onClick={() => { setText(t => t + e); setShowEmoji(false) }}
-                  style={{ fontSize:22, cursor:'pointer', padding:3, borderRadius:6 }}>{e}</span>
-              ))}
-            </div>
-          )}
+        <div style={{ flex:1 }}>
+          <div style={{ position:'relative' }}>
+            <textarea className="compose-input" placeholder="What's happening near you?"
+              value={text} onChange={e => setText(e.target.value)}
+              onInput={e => { e.target.style.height='auto'; e.target.style.height=Math.min(e.target.scrollHeight,120)+'px' }}
+              onKeyDown={e => { if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); handlePost() } }}
+              style={{ width:'100%', paddingRight:40 }} />
+            <button onClick={() => setShowEmoji(s => !s)}
+              style={{ position:'absolute', right:8, bottom:10, background:'none', border:'none', fontSize:18, cursor:'pointer', opacity:0.6 }}>😊</button>
+            {showEmoji && (
+              <div style={{ position:'absolute', top:'100%', left:0, right:0, marginTop:4, background:'var(--bg)', border:'0.5px solid var(--border)', borderRadius:12, padding:10, display:'flex', flexWrap:'wrap', gap:4, zIndex:50, boxShadow:'0 4px 20px rgba(0,0,0,0.12)' }}>
+                {EMOJIS.map(e => (
+                  <span key={e} onClick={() => { setText(t => t + e); setShowEmoji(false) }}
+                    style={{ fontSize:22, cursor:'pointer', padding:3, borderRadius:6 }}>{e}</span>
+                ))}
+              </div>
+            )}
+          </div>
           <div style={{ fontSize:11, color: text.length > 500 ? '#cc3333' : 'var(--text3)', textAlign:'right', marginTop:4 }}>
             {text.length} / 500
           </div>
