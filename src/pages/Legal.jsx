@@ -15,9 +15,8 @@ export default function Legal() {
 
       <div style={{ padding: '0 20px' }}>
 
-        {/* LEGAL NOTICE */}
         <div style={{ marginTop: 28, marginBottom: 32 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>Legal Notice</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>Impressum</h2>
           <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text2)' }}>
             <strong>{name}</strong><br />
             {address}<br />
@@ -30,7 +29,6 @@ export default function Legal() {
 
         <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', marginBottom: 28 }} />
 
-        {/* PRIVACY POLICY */}
         <div style={{ marginBottom: 32 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>Privacy Policy</h2>
 
@@ -45,6 +43,7 @@ export default function Legal() {
               <li><strong>Location (GPS coordinates)</strong> – only when you grant permission, used to show nearby posts. We store the coordinates of each post you make.</li>
               <li><strong>Username, age range, gender, community badges</strong> – optional profile information you choose to provide</li>
               <li><strong>Posts, comments, private messages</strong> – content you create on the platform</li>
+              <li><strong>Social media name and link</strong> – only if you voluntarily claim a "100 Supporters" slot; this is shown publicly to all users and on a dedicated page</li>
               <li><strong>IP address</strong> – automatically logged by our infrastructure provider (Supabase/Vercel) for security purposes</li>
             </ul>
             We do <strong>not</strong> collect phone numbers, payment data, or any tracking/advertising data.
@@ -56,15 +55,16 @@ export default function Legal() {
               <li>Location: to show you nearby posts and calculate distances (legal basis: your explicit consent, Art. 6(1)(a) GDPR)</li>
               <li>Profile data: to personalize your profile (legal basis: consent)</li>
               <li>Posts/messages: core functionality of the service (legal basis: contract)</li>
+              <li>Social media name/link: published only with your explicit, voluntary action when claiming a supporter slot (legal basis: consent, Art. 6(1)(a) GDPR). You can remove it at any time, which deletes it immediately.</li>
             </ul>
           </Section>
 
           <Section title="4. Where data is stored">
-            Your data is stored with <strong>Supabase</strong> (database) and <strong>Vercel</strong> (hosting). Both are reputable providers with strong security standards (ISO 27001, SOC 2). Data may be processed on servers in the <strong>United States</strong>. Supabase and Vercel both participate in EU-US data transfer frameworks. By using lokali, you consent to this transfer.
+            Your data is stored with <strong>Supabase</strong> (database) and <strong>Vercel</strong> (hosting). Both are reputable providers with strong security standards (ISO 27001, SOC 2). Data may be processed on servers in the <strong>United States</strong>. By using lokali, you consent to this transfer.
           </Section>
 
           <Section title="5. How long we keep data">
-            We keep your data for as long as your account is active. If you delete your account, your data will be deleted within 30 days, except where we are required by law to retain it.
+            We keep your data for as long as your account is active. If you delete your account, your posts, comments, messages, profile, and any supporter entry will be permanently deleted immediately. Your email address (held by Supabase Auth) will be removed within 30 days.
           </Section>
 
           <Section title="6. Your rights (GDPR)">
@@ -101,7 +101,7 @@ export default function Legal() {
           </Section>
 
           <p style={{ fontSize: 12, color: 'var(--text3)', marginTop: 24 }}>
-            Last updated: May 2026
+            Last updated: June 2026
           </p>
         </div>
       </div>

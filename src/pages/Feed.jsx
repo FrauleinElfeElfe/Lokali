@@ -275,14 +275,14 @@ export default function Feed() {
       if (activeBounds) {
         const b = activeBounds
         const { data: d } = await supabase.from('posts')
-          .select('*, profiles(username,avatar), comments(id)')
+          .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
           .gte('lat', b.lat[0]).lte('lat', b.lat[1])
           .gte('lng', b.lng[0]).lte('lng', b.lng[1])
           .order('created_at', { ascending: false }).limit(100)
         data = d
       } else if (radius === 99999 || locDenied) {
         const { data: d } = await supabase.from('posts')
-          .select('*, profiles(username,avatar), comments(id)')
+          .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
           .order('created_at', { ascending: false }).limit(100)
         data = d
       } else {
@@ -293,7 +293,7 @@ export default function Feed() {
           data = d
         } catch {
           const { data: d } = await supabase.from('posts')
-            .select('*, profiles(username,avatar), comments(id)')
+            .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
             .order('created_at', { ascending: false }).limit(50)
           data = d
         }
@@ -324,14 +324,14 @@ export default function Feed() {
 
     // Trigger: empty message
     if (!trimmed) {
-      await createSystemPost(`${profile?.username} has nothing to say 🤷`)
+      await createSystemPost(`${profile?.username} has nothing to say 🤷`, user.id)
       setText('')
       return
     }
 
     // Trigger: way too long (book)
     if (text.length > 1000) {
-      await createSystemPost(`${profile?.username} is writing a book 📖`)
+      await createSystemPost(`${profile?.username} is writing a book 📖`, user.id)
       setText(''); showToast("That's a lot of words! Maybe keep it under 500 characters next time 😄")
       return
     }
@@ -340,7 +340,7 @@ export default function Feed() {
     // Trigger: no spaces, very long single "word"
     const hasNoSpaces = !trimmed.includes(' ') && trimmed.length > 60
     if (hasNoSpaces) {
-      await createSystemPost(`${profile?.username} is on an infinite road 🛣️`)
+      await createSystemPost(`${profile?.username} is on an infinite road 🛣️`, user.id)
       setText('')
       return
     }
@@ -358,14 +358,14 @@ export default function Feed() {
       if ((creditRow?.credits || 0) >= 100) {
         const { data: alreadyAnnounced } = await supabase.from('posts').select('id').eq('is_system', true).ilike('text', `%${profile?.username} is pixelated%`).limit(1)
         if (!alreadyAnnounced || alreadyAnnounced.length === 0) {
-          await createSystemPost(`${profile?.username} is pixelated 🟦`)
+          await createSystemPost(`${profile?.username} is pixelated 🟦`, user.id)
         }
       }
 
       // Trigger: 0.5% unicorn summon
       if (Math.random() < 0.005) {
         await supabase.rpc('summon_unicorn', { p_user_id: user.id }).catch(() => {})
-        await createSystemPost(`${profile?.username} summoned Cornelius the unicorn 🦄`)
+        await createSystemPost(`${profile?.username} summoned Cornelius the unicorn 🦄`, user.id)
       }
 
       load()
@@ -373,12 +373,13 @@ export default function Feed() {
     finally { setSending(false) }
   }
 
-  async function createSystemPost(message) {
+  async function createSystemPost(message, triggeredByUserId) {
     try {
       await supabase.from('posts').insert({
         user_id: null,
         text: message,
         is_system: true,
+        triggered_by_user_id: triggeredByUserId || null,
         lat: loc?.lat !== 0 ? loc?.lat : null,
         lng: loc?.lng !== 0 ? loc?.lng : null,
       })
@@ -547,7 +548,16 @@ export default function Feed() {
                 </div>
                 {post.distance_m != null && <div className="dist-badge">{fmtDist(post.distance_m)}</div>}
               </div>
-              <div className="post-text">{post.text}</div>
+              <div className="post-text">
+                {isSystem && post.triggered_profile?.username ? (
+                  <>
+                    <span onClick={() => navigate(`/profile/${post.triggered_by_user_id}`)} style={{ color:'var(--accent)', fontWeight:600, cursor:'pointer' }}>
+                      {post.triggered_profile.username}
+                    </span>
+                    {post.text.slice(post.triggered_profile.username.length)}
+                  </>
+                ) : post.text}
+              </div>
               {!isSystem && (
               <div className="post-actions">
                 <button className="action-btn" onClick={() => toggleCmts(post.id)}>
@@ -555,6 +565,14 @@ export default function Feed() {
                 </button>
                 {!isOwn && <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>✉ Message</button>}
                 {!isOwn && <button className="action-btn report" onClick={() => { setReportTarget({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>⚑ Report</button>}
+                {isOwn && (
+                  <button className="action-btn report" onClick={async () => {
+                    if (!window.confirm('Delete this post?')) return
+                    await supabase.from('posts').delete().eq('id', post.id)
+                    showToast('Post deleted.')
+                    load()
+                  }}>🗑 Delete</button>
+                )}
               </div>
               )}
               {!isSystem && openCmts[post.id] && (
