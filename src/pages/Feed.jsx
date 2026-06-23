@@ -320,17 +320,70 @@ export default function Feed() {
   }
 
   async function handlePost() {
-    if (!text.trim()) return
+    const trimmed = text.trim()
+
+    // Trigger: empty message
+    if (!trimmed) {
+      await createSystemPost(`${profile?.username} has nothing to say 🤷`)
+      setText('')
+      return
+    }
+
+    // Trigger: way too long (book)
+    if (text.length > 1000) {
+      await createSystemPost(`${profile?.username} is writing a book 📖`)
+      setText(''); showToast("That's a lot of words! Maybe keep it under 500 characters next time 😄")
+      return
+    }
     if (text.length > 500) { showToast('Your post is too long – please shorten it to 500 characters.'); return }
+
+    // Trigger: no spaces, very long single "word"
+    const hasNoSpaces = !trimmed.includes(' ') && trimmed.length > 60
+    if (hasNoSpaces) {
+      await createSystemPost(`${profile?.username} is on an infinite road 🛣️`)
+      setText('')
+      return
+    }
+
     setSending(true)
     try {
-      await createPost(user.id, text.trim(),
+      await createPost(user.id, trimmed,
         loc?.lat !== 0 ? loc?.lat : null,
         loc?.lng !== 0 ? loc?.lng : null)
       try { await supabase.rpc('grant_post_credit', { p_user_id: user.id }) } catch {}
-      setText(''); showToast('Post published! ✓'); load()
+      setText(''); showToast('Post published! ✓')
+
+      // Trigger: pixel milestone (100+)
+      const { data: creditRow } = await supabase.from('pixel_credits').select('credits').eq('user_id', user.id).maybeSingle()
+      if ((creditRow?.credits || 0) >= 100) {
+        const { data: alreadyAnnounced } = await supabase.from('posts').select('id').eq('is_system', true).ilike('text', `%${profile?.username} is pixelated%`).limit(1)
+        if (!alreadyAnnounced || alreadyAnnounced.length === 0) {
+          await createSystemPost(`${profile?.username} is pixelated 🟦`)
+        }
+      }
+
+      // Trigger: 0.5% unicorn summon
+      if (Math.random() < 0.005) {
+        await supabase.rpc('summon_unicorn', { p_user_id: user.id }).catch(() => {})
+        await createSystemPost(`${profile?.username} summoned Cornelius the unicorn 🦄`)
+      }
+
+      load()
     } catch (e) { showToast(e.message) }
     finally { setSending(false) }
+  }
+
+  async function createSystemPost(message) {
+    try {
+      await supabase.from('posts').insert({
+        user_id: null,
+        text: message,
+        is_system: true,
+        lat: loc?.lat !== 0 ? loc?.lat : null,
+        lng: loc?.lng !== 0 ? loc?.lng : null,
+      })
+      load()
+    } catch (e) { console.error(e) }
   }
 
   async function toggleCmts(id) {
@@ -466,6 +519,7 @@ export default function Feed() {
         ? <div className="empty-state">No posts in this area yet.<br />Be the first! ✍️</div>
         : posts.map((post, idx) => {
           const isOwn = post.user_id === user.id
+          const isSystem = post.is_system
           const cmts = cmtsData[post.id] || []
           const cntDisplay = cntData[post.id] ?? 0
           const ad = AD_BANNERS[0]
@@ -478,22 +532,23 @@ export default function Feed() {
                   <div style={{ fontSize:10, color:'var(--text3)', textAlign:'center', marginTop:4, letterSpacing:'0.5px' }}>Advertisement</div>
                 </div>
               )}
-            <div className="post-card">
+            <div className="post-card" style={isSystem ? { background:'var(--accent-light)' } : undefined}>
               <div className="post-header">
-                <div className="avatar" style={{ cursor:'pointer' }}
-                  onClick={() => navigate(`/profile/${post.user_id}`)}>
-                  {post.profiles?.avatar || '🌳'}
+                <div className="avatar" style={{ cursor: isSystem ? 'default' : 'pointer' }}
+                  onClick={() => !isSystem && navigate(`/profile/${post.user_id}`)}>
+                  {isSystem ? '🌳' : (post.profiles?.avatar || '🌳')}
                 </div>
                 <div className="post-meta">
-                  <div className="post-username">
-                    {post.profiles?.username || 'Unknown'}
-                    {isOwn && <span style={{ fontSize:11, color:'var(--accent)', marginLeft:6 }}>(you)</span>}
+                  <div className="post-username" style={isSystem ? { fontFamily:'Caveat, cursive', color:'var(--accent)', fontSize:18, fontWeight:700 } : undefined}>
+                    {isSystem ? 'lokali' : (post.profiles?.username || 'Unknown')}
+                    {isOwn && !isSystem && <span style={{ fontSize:11, color:'var(--accent)', marginLeft:6 }}>(you)</span>}
                   </div>
                   <div className="post-time">{timeAgo(post.created_at)}</div>
                 </div>
                 {post.distance_m != null && <div className="dist-badge">{fmtDist(post.distance_m)}</div>}
               </div>
               <div className="post-text">{post.text}</div>
+              {!isSystem && (
               <div className="post-actions">
                 <button className="action-btn" onClick={() => toggleCmts(post.id)}>
                   💬 {openCmts[post.id] ? cmts.length : cntDisplay}
@@ -501,7 +556,8 @@ export default function Feed() {
                 {!isOwn && <button className="action-btn" onClick={() => navigate(`/chats/${post.user_id}`)}>✉ Message</button>}
                 {!isOwn && <button className="action-btn report" onClick={() => { setReportTarget({ id: post.id, username: post.profiles?.username }); setReportReason('') }}>⚑ Report</button>}
               </div>
-              {openCmts[post.id] && (
+              )}
+              {!isSystem && openCmts[post.id] && (
                 <div className="comments-wrap">
                   {cmts.map(c => (
                     <div className="comment" key={c.id}>
