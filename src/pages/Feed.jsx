@@ -272,6 +272,7 @@ export default function Feed() {
   async function load() {
     try {
       let data
+      console.log('[lokali] load() called with radius=', radius, 'activeBounds=', activeBounds, 'locDenied=', locDenied, 'loc=', loc)
       if (activeBounds) {
         const b = activeBounds
         const { data: d } = await supabase.from('posts')
@@ -286,15 +287,16 @@ export default function Feed() {
           .order('created_at', { ascending: false }).limit(100)
         data = d
       } else {
-        try {
-          const { data: d } = await supabase.rpc('posts_within_radius', {
-            user_lat: loc.lat, user_lng: loc.lng, radius_km: radius
-          })
-          data = d
-        } catch {
-          const { data: d } = await supabase.from('posts')
+        const { data: d, error } = await supabase.rpc('posts_within_radius', {
+          user_lat: loc.lat, user_lng: loc.lng, radius_km: radius
+        })
+        if (error) {
+          console.error('posts_within_radius error', error)
+          const { data: fallback } = await supabase.from('posts')
             .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
             .order('created_at', { ascending: false }).limit(50)
+          data = fallback
+        } else {
           data = d
         }
       }
