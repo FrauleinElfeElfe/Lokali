@@ -349,9 +349,10 @@ export default function Feed() {
 
     setSending(true)
     try {
+      const hasRealLoc = loc && !locDenied && loc.lat !== 0 && loc.lng !== 0
       await createPost(user.id, trimmed,
-        loc?.lat !== 0 ? loc?.lat : null,
-        loc?.lng !== 0 ? loc?.lng : null)
+        hasRealLoc ? loc.lat : null,
+        hasRealLoc ? loc.lng : null)
       try { await supabase.rpc('grant_post_credit', { p_user_id: user.id }) } catch {}
       setText(''); showToast('Post published! ✓')
 
@@ -377,13 +378,14 @@ export default function Feed() {
 
   async function createSystemPost(message, triggeredByUserId) {
     try {
+      const hasRealLoc = loc && !locDenied && loc.lat !== 0 && loc.lng !== 0
       await supabase.from('posts').insert({
         user_id: null,
         text: message,
         is_system: true,
         triggered_by_user_id: triggeredByUserId || null,
-        lat: loc?.lat !== 0 ? loc?.lat : null,
-        lng: loc?.lng !== 0 ? loc?.lng : null,
+        lat: hasRealLoc ? loc.lat : null,
+        lng: hasRealLoc ? loc.lng : null,
       })
       load()
     } catch (e) { console.error(e) }
