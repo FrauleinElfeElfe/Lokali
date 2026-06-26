@@ -185,6 +185,13 @@ function fmtDist(m) {
   return m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(1)} km`
 }
 
+const IDENTITY_FILTER_OPTIONS = [
+  { group: 'Orientation & Gender', items: ['LGBTQ+'] },
+  { group: 'Neurodivergent', items: ['ADHD', 'Autism', 'AuDHD', 'Dyslexia', 'Dyscalculia'] },
+  { group: 'Mental Health', items: ['Depression', 'Anxiety', 'BPD', 'PTSD / cPTSD', 'Bipolar'] },
+  { group: 'Physical', items: ['Chronic illness', 'Physical disability', 'Hearing impaired', 'Visually impaired'] },
+]
+
 function CountryDropdown({ countries, activeLabel, onSelect, onClose }) {
   return (
     <div style={{ position:'absolute', top:'100%', left:0, right:0, background:'var(--bg)', border:'0.5px solid var(--border)', borderTop:'none', zIndex:50, maxHeight:300, overflowY:'auto', boxShadow:'0 8px 24px rgba(0,0,0,0.1)' }}>
@@ -229,6 +236,12 @@ export default function Feed() {
   const [openMenu, setOpenMenu] = useState(null)
   const [reportTarget, setReportTarget] = useState(null)
   const [reportReason, setReportReason] = useState('')
+  const [identityFilters, setIdentityFilters] = useState([])
+  const [showIdentityFilter, setShowIdentityFilter] = useState(false)
+
+  function toggleIdentityFilter(tag) {
+    setIdentityFilters(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])
+  }
   const [adIndex, setAdIndex] = useState(0)
   const [canvasPreview, setCanvasPreview] = useState(null)
   const [canvasPixels, setCanvasPixels] = useState([])
@@ -267,7 +280,7 @@ export default function Feed() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, load)
       .subscribe()
     return () => supabase.removeChannel(ch)
-  }, [loc, radius, activeBounds])
+  }, [loc, radius, activeBounds, identityFilters])
 
   async function load() {
     try {
@@ -276,14 +289,14 @@ export default function Feed() {
       if (activeBounds) {
         const b = activeBounds
         const { data: d } = await supabase.from('posts')
-          .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
+          .select('*, profiles!posts_user_id_fkey(username,avatar,identities,visibility), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
           .gte('lat', b.lat[0]).lte('lat', b.lat[1])
           .gte('lng', b.lng[0]).lte('lng', b.lng[1])
           .order('created_at', { ascending: false }).limit(100)
         data = d
       } else if (radius === 99999 || locDenied) {
         const { data: d } = await supabase.from('posts')
-          .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
+          .select('*, profiles!posts_user_id_fkey(username,avatar,identities,visibility), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
           .order('created_at', { ascending: false }).limit(100)
         data = d
       } else {
@@ -293,14 +306,24 @@ export default function Feed() {
         if (error) {
           console.error('posts_within_radius error', error)
           const { data: fallback } = await supabase.from('posts')
-            .select('*, profiles!posts_user_id_fkey(username,avatar), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
+            .select('*, profiles!posts_user_id_fkey(username,avatar,identities,visibility), comments(id), triggered_profile:profiles!posts_triggered_by_user_id_fkey(username,avatar)')
             .order('created_at', { ascending: false }).limit(50)
           data = fallback
         } else {
           data = d
         }
       }
-      const ps = data || []
+      let ps = data || []
+      // Filter by identity tags if any are selected (system posts always pass through)
+      if (identityFilters.length > 0) {
+        ps = ps.filter(p => {
+          if (p.is_system) return true
+          const tags = p.profiles?.identities || []
+          const vis = p.profiles?.visibility?.identities
+          if (vis === false) return false
+          return identityFilters.some(f => tags.includes(f))
+        })
+      }
       const counts = {}
       ps.forEach(p => { counts[p.id] = p.comments ? p.comments.length : (p.comment_count || 0) })
       setCntData(counts)
@@ -468,6 +491,39 @@ export default function Feed() {
         {openMenu === 'australia' && <CountryDropdown countries={AUSTRALIA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
         {openMenu === 'europe' && <CountryDropdown countries={EUROPE_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
         {openMenu === 'southamerica' && <CountryDropdown countries={SOUTH_AMERICA_COUNTRIES} activeLabel={activeLabel} onSelect={selectCountry} onClose={() => setOpenMenu(null)} />}
+      </div>
+
+      <div style={{ borderBottom:'0.5px solid var(--border)', position:'relative' }}>
+        <div onClick={() => setShowIdentityFilter(s => !s)}
+          style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 20px', cursor:'pointer' }}>
+          <span style={{ fontSize:12, fontWeight:600, color: identityFilters.length > 0 ? 'var(--accent)' : 'var(--text2)' }}>
+            🏷️ Community filter {identityFilters.length > 0 ? `(${identityFilters.length})` : ''}
+          </span>
+          <span style={{ fontSize:11, color:'var(--text3)' }}>{showIdentityFilter ? '▴' : '▾'}</span>
+          {identityFilters.length > 0 && (
+            <span onClick={e => { e.stopPropagation(); setIdentityFilters([]) }}
+              style={{ fontSize:11, color:'var(--accent)', marginLeft:'auto', textDecoration:'underline' }}>
+              Clear
+            </span>
+          )}
+        </div>
+        {showIdentityFilter && (
+          <div style={{ padding:'0 20px 14px' }}>
+            {IDENTITY_FILTER_OPTIONS.map(group => (
+              <div key={group.group} style={{ marginTop:8 }}>
+                <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:6 }}>{group.group}</div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                  {group.items.map(tag => (
+                    <div key={tag} onClick={() => toggleIdentityFilter(tag)}
+                      style={{ padding:'6px 12px', borderRadius:20, fontSize:12, fontWeight:500, cursor:'pointer', border:'0.5px solid', borderColor: identityFilters.includes(tag) ? 'var(--accent)' : 'var(--border)', background: identityFilters.includes(tag) ? 'var(--accent-light)' : 'var(--bg2)', color: identityFilters.includes(tag) ? 'var(--accent)' : 'var(--text2)' }}>
+                      {tag}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="compose-bar">
