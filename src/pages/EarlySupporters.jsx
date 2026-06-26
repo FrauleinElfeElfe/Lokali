@@ -75,7 +75,7 @@ export default function EarlySupporters() {
 
       <div style={{ padding:'16px 20px' }}>
         <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:16 }}>
-          100 lokali users can claim a permanent shoutout here with a link to their social media. First come, first served – once full, it's full. You can remove your entry anytime to free up the slot for someone else.
+          100 lokali users can claim a permanent shoutout here with a link to their social media. First come, first served. Of course you can remove your entry anytime. The slot can then be used by someone else.
         </p>
 
         <div style={{ fontSize:13, fontWeight:600, color:'var(--accent)', marginBottom:16 }}>
