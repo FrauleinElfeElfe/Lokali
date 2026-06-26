@@ -75,7 +75,7 @@ export default function EarlySupporters() {
 
       <div style={{ padding:'16px 20px' }}>
         <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:16 }}>
-          100 lokali users can claim a permanent shoutout here with a link to their social media. First come, first served. Of course you can remove your entry anytime. The slot can then be used by someone else.
+          100 lokali users can claim a permanent shoutout here with a link to their social media. First come, first served – once full, it's full. You can remove your entry anytime to free up the slot for someone else.
         </p>
 
         <div style={{ fontSize:13, fontWeight:600, color:'var(--accent)', marginBottom:16 }}>
@@ -84,7 +84,8 @@ export default function EarlySupporters() {
 
         {myEntry ? (
           <div style={{ padding:14, background:'var(--accent-light)', borderRadius:12, marginBottom:20 }}>
-            <div style={{ fontSize:13, color:'var(--text2)', marginBottom:8 }}>You hold slot #{myEntry.slot_number}: <strong>{myEntry.social_name}</strong></div>
+            <div style={{ fontSize:13, color:'var(--text2)', marginBottom:4 }}>You hold slot #{myEntry.slot_number}: <strong>{myEntry.social_name}</strong></div>
+            <div style={{ fontSize:11, color:'var(--accent)', marginBottom:8, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{myEntry.social_url}</div>
             <button onClick={removeEntry} style={{ padding:'8px 14px', background:'transparent', border:'0.5px solid var(--accent)', borderRadius:8, color:'var(--accent)', cursor:'pointer', fontFamily:'inherit', fontSize:12, fontWeight:600 }}>
               Remove my entry
             </button>
@@ -124,9 +125,10 @@ export default function EarlySupporters() {
               style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 0', borderBottom:'0.5px solid var(--border)', textDecoration:'none', color:'inherit' }}>
               <div style={{ fontSize:13, fontWeight:700, color:'var(--text3)', width:28 }}>#{s.slot_number}</div>
               <div className="avatar" style={{ width:32, height:32, fontSize:16 }}>{s.profiles?.avatar || '🌳'}</div>
-              <div style={{ flex:1 }}>
+              <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:14, fontWeight:600 }}>{s.social_name}</div>
                 <div style={{ fontSize:11, color:'var(--text3)' }}>@{s.profiles?.username}</div>
+                <div style={{ fontSize:11, color:'var(--accent)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.social_url}</div>
               </div>
               <div style={{ fontSize:14, color:'var(--accent)' }}>↗</div>
             </a>
