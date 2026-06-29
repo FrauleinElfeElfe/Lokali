@@ -266,9 +266,14 @@ export default function Feed() {
   }
 
   useEffect(() => {
-    navigator.geolocation?.getCurrentPosition(
+    if (!navigator.geolocation) {
+      setLoc({ lat: 0, lng: 0 }); setLocDenied(true); setRadius(99999); setActiveLabel('🌍 Global')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
       p => { setLoc({ lat: p.coords.latitude, lng: p.coords.longitude }); setLocDenied(false) },
-      () => { setLoc({ lat: 0, lng: 0 }); setLocDenied(true); setRadius(99999); setActiveLabel('🌍 Global') }
+      () => { setLoc({ lat: 0, lng: 0 }); setLocDenied(true); setRadius(99999); setActiveLabel('🌍 Global') },
+      { timeout: 8000, maximumAge: 60000 }
     )
   }, [])
 
@@ -314,7 +319,7 @@ export default function Feed() {
         }
       }
       let ps = data || []
-      // Filter by identity tags if any are selected (system posts always pass through)
+      console.log('[lokali] posts before identity filter:', ps.length, 'filters:', identityFilters)
       if (identityFilters.length > 0) {
         ps = ps.filter(p => {
           if (p.is_system) return true
@@ -323,6 +328,7 @@ export default function Feed() {
           if (vis === false) return false
           return identityFilters.some(f => tags.includes(f))
         })
+        console.log('[lokali] posts after identity filter:', ps.length)
       }
       const counts = {}
       ps.forEach(p => { counts[p.id] = p.comments ? p.comments.length : (p.comment_count || 0) })
